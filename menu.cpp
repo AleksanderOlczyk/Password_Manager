@@ -53,21 +53,33 @@ void Menu::doAction(int option) {
             break;
         case 2:
             cout << "Opcja numer 2" << endl;
+            cin.ignore();
+            cin.get();
             break;
         case 3:
             cout << "Opcja numer 3" << endl;
+            cin.ignore();
+            cin.get();
             break;
         case 4:
             cout << "Opcja numer 4" << endl;
+            cin.ignore();
+            cin.get();
             break;
         case 5:
             cout << "Opcja numer 5" << endl;
+            cin.ignore();
+            cin.get();
             break;
         case 6:
             cout << "Opcja numer 6" << endl;
+            cin.ignore();
+            cin.get();
             break;
         case 7:
             cout << "Opcja numer 7" << endl;
+            cin.ignore();
+            cin.get();
             break;
     }
 }
