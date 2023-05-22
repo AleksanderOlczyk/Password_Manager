@@ -1,0 +1,3 @@
+D:/Olek/PJATK/CPP/projekt01/cmake-build-debug/CMakeFiles/projekt01.dir
+D:/Olek/PJATK/CPP/projekt01/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/Olek/PJATK/CPP/projekt01/cmake-build-debug/CMakeFiles/rebuild_cache.dir
