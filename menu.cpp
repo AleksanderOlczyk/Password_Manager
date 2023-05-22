@@ -48,6 +48,8 @@ void Menu::doAction(int option) {
             break;
         case 1:
             cout << "Opcja numer 1" << endl;
+            cin.ignore();
+            cin.get();
             break;
         case 2:
             cout << "Opcja numer 2" << endl;
