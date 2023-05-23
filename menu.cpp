@@ -30,7 +30,7 @@ void Menu::showOptions() {
         cout << "Choose option: ";
 
         // Check if the input is a number.
-        while (!(cin >> option)) {
+        while (!(cin >> option) || option < 0 || option > 7) {
             cout << "Invalid input. Please enter a valid option: ";
             cin.clear();
             cin.ignore();
