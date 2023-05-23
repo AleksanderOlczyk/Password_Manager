@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 #include "menu.h"
 
 using namespace std;
@@ -57,7 +59,7 @@ void Menu::doAction(int option) {
             cout << "Opcja numer 2" << endl;
             break;
         case 3:
-            cout << "Opcja numer 3" << endl;
+            addUserPassword();
             break;
         case 4:
             cout << "Opcja numer 4" << endl;
@@ -75,4 +77,93 @@ void Menu::doAction(int option) {
 
     cin.ignore();
     cin.get();
+}
+
+/**
+ * This method adds a password.
+ */
+void Menu::addUserPassword() {
+    string password;
+
+    cout << "Enter your password: ";
+    cin >> password;
+
+    // Check password strength
+    int strength = checkPasswordStrength(password);
+
+    if (strength >= 3) {
+        cout << "Your password is strong: " << strength << "\\3.\n";
+    } else {
+        cout << "Your password is weak: " << strength << "\\3.\n";
+    }
+
+    // Check if the password has been used before
+    if (isPasswordUsed(password)) {
+        cout << "This password has been used before." << endl;
+    }
+
+    cin.ignore();
+    cin.get();
+}
+
+/**
+ * This method checks the strength of a password.
+ * @param password - password to check
+ * @return strength level (0 - weak, 1 - medium, 2 - strong)
+ */
+int Menu::checkPasswordStrength(const string& password) {
+    int length = password.length();
+    if (length < 8) {
+        return 0; // Weak password
+    }
+
+    //Check if the password contains uppercase letters
+    bool hasUppercase = false;
+    for (char c : password) {
+        if (isupper(c)) {
+            hasUppercase = true;
+            break;
+        }
+    }
+
+    //Check if the password contains lowercase letters
+    bool hasLowercase = false;
+    for (char c : password) {
+        if (islower(c)) {
+            hasLowercase = true;
+            break;
+        }
+    }
+
+    //Check if the password contains special characters
+    bool hasSpecialChars = false;
+    for (char c : password) {
+        if (!isalnum(c)) {
+            hasSpecialChars = true;
+            break;
+        }
+    }
+
+    int strength = 0;
+    if (hasUppercase) {
+        strength++;
+    }
+    if (hasLowercase) {
+        strength++;
+    }
+    if (hasSpecialChars) {
+        strength++;
+    }
+
+    return strength;
+}
+
+/**
+ * This method checks if a password has been used before.
+ * @param password - password to check
+ * @return true if the password has been used before, false otherwise
+ */
+bool Menu::isPasswordUsed(const string& password) {
+    // TODO: Implement password checking logic
+    return false;
 }

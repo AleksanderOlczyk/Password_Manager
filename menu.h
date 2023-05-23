@@ -13,6 +13,10 @@ public:
 private:
     void clearScreen();
     void doAction(int option);
+
+    void addUserPassword();
+    int checkPasswordStrength(const string &password);
+    bool isPasswordUsed(const string &password);
 };
 
 #endif
