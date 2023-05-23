@@ -1,8 +1,7 @@
+#include <iostream>
 #include "menu.h"
 
-/***
- * This is a menu class.
- */
+using namespace std;
 
 /**
  * This method clears the screen.
@@ -20,18 +19,17 @@ void Menu::showOptions() {
     do {
         clearScreen();
         cout << "Menu:" << endl;
-        cout << "1. Opcja numer 1" << endl;
-        cout << "2. Opcja numer 2" << endl;
-        cout << "3. Opcja numer 3" << endl;
-        cout << "4. Opcja numer 4" << endl;
-        cout << "5. Opcja numer 5" << endl;
-        cout << "6. Opcja numer 6" << endl;
-        cout << "7. Opcja numer 7" << endl;
+        cout << "1. Find passwords" << endl;
+        cout << "2. Sort passwords" << endl;
+        cout << "3. Add password" << endl;
+        cout << "4. Edit password" << endl;
+        cout << "5. Delete password" << endl;
+        cout << "6. Add category" << endl;
+        cout << "7. Delete category" << endl;
         cout << "0. Exit" << endl;
-        cout << "Chose option: ";
-        cin >> option;
+        cout << "Choose option: ";
 
-        //Check if the input is a number.
+        // Check if the input is a number.
         while (!(cin >> option)) {
             cout << "Invalid input. Please enter a valid option: ";
             cin.clear();
@@ -54,38 +52,27 @@ void Menu::doAction(int option) {
             exit(0);
         case 1:
             cout << "Opcja numer 1" << endl;
-            cin.ignore();
-            cin.get();
             break;
         case 2:
             cout << "Opcja numer 2" << endl;
-            cin.ignore();
-            cin.get();
             break;
         case 3:
             cout << "Opcja numer 3" << endl;
-            cin.ignore();
-            cin.get();
             break;
         case 4:
             cout << "Opcja numer 4" << endl;
-            cin.ignore();
-            cin.get();
             break;
         case 5:
             cout << "Opcja numer 5" << endl;
-            cin.ignore();
-            cin.get();
             break;
         case 6:
             cout << "Opcja numer 6" << endl;
-            cin.ignore();
-            cin.get();
             break;
         case 7:
             cout << "Opcja numer 7" << endl;
-            cin.ignore();
-            cin.get();
             break;
     }
+
+    cin.ignore();
+    cin.get();
 }
