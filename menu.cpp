@@ -31,6 +31,13 @@ void Menu::showOptions() {
         cout << "Chose option: ";
         cin >> option;
 
+        //Check if the input is a number.
+        while (!(cin >> option)) {
+            cout << "Invalid input. Please enter a valid option: ";
+            cin.clear();
+            cin.ignore();
+        }
+
         doAction(option);
     } while (option != 0);
 }
@@ -44,8 +51,7 @@ void Menu::doAction(int option) {
 
     switch (option) {
         case 0:
-            cout << "Exit" << endl;
-            break;
+            exit(0);
         case 1:
             cout << "Opcja numer 1" << endl;
             cin.ignore();
