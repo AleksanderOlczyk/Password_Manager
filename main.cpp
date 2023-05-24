@@ -1,12 +1,15 @@
-#include <iostream>
-#include "menu.h"
 #include "menu.cpp"
+#include "loginMenu.h"
+#include "loginMenu.cpp"
 
 using namespace std;
 
 int main() {
-    Menu menu;
-    menu.showOptions();
+    LoginMenu loginMenu;
+    loginMenu.showOptions();
+
+//    Menu menu;
+//    menu.showOptions();
 
     return 0;
 }
