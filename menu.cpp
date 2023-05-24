@@ -144,6 +144,15 @@ int Menu::checkPasswordStrength(const string& password) {
         }
     }
 
+    //Check if the password contains special characters
+    bool hasDigit = false;
+    for (char c : password) {
+        if (!isdigit(c)) {
+            hasDigit = true;
+            break;
+        }
+    }
+
     int strength = 0;
     if (hasUppercase) {
         strength++;
@@ -152,6 +161,9 @@ int Menu::checkPasswordStrength(const string& password) {
         strength++;
     }
     if (hasSpecialChars) {
+        strength++;
+    }
+    if (hasDigit) {
         strength++;
     }
 
