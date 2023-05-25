@@ -12,7 +12,16 @@ public:
 private:
     void clearScreen();
 
+    /**
+     * This method logs in the user.
+     */
     void logIn();
+
+    /**
+     * This method displays * instead of the actual password.
+     */
+    string getPasswordInput();
+
     void signUp();
     bool isRegistered(const std::string& username);
 };

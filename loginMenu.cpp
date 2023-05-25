@@ -51,7 +51,7 @@ void LoginMenu::logIn() {
     cin >> username;
 
     cout << "Enter password: ";
-    cin >> password;
+    password = getPasswordInput();
 
     ifstream file("users.txt");
     string line;
@@ -75,6 +75,29 @@ void LoginMenu::logIn() {
         cin.get();
     }
 }
+
+string LoginMenu::getPasswordInput() {
+    string password;
+    char c;
+
+    while ((c = _getwch()) != '\r') {  // Read characters until Enter is pressed
+        if (c == '\b') {  // Handle Backspace
+            if (!password.empty()) {
+                cout << "\b \b";  // Erase the previous character
+                password.pop_back();
+            }
+        } else {
+            cout << '*';
+            password.push_back(c);
+        }
+    }
+
+    cout << endl;  // Move to the next line
+
+    return password;
+}
+
+
 
 void LoginMenu::signUp() {
     clearScreen();
