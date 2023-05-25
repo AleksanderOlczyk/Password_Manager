@@ -8,8 +8,5 @@ int main() {
     LoginMenu loginMenu;
     loginMenu.showOptions();
 
-//    Menu menu;
-//    menu.showOptions();
-
     return 0;
 }

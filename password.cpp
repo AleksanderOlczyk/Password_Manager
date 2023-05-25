@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include "password.h"
 
 using std::cout, std::cin, std::string, std::endl, std::ifstream, std::ofstream;
@@ -18,19 +19,37 @@ bool Password::isPasswordUsed(const string& username, const string& password) {
 }
 
 void Password::generateAndSetPassword(const string& username) {
-    string generatedPassword = generateStrongPassword();
-    cout << "Generated password: " << generatedPassword << endl;
+    int length;
+    bool includeLowercase, includeUppercase, includeSpecialChars, includeDigits;
 
-    if (isPasswordUsed(username, generatedPassword)) {
-        cout << "The generated password has been used before." << endl;
-        cout << "Please enter a different password." << endl;
-        return;
+    cout << "Password Length: ";
+    cin >> length;
+
+    cout << "Include Lowercase Letters (Y/N): ";
+    includeLowercase = getUserChoice();
+
+    cout << "Include Uppercase Letters (Y/N): ";
+    includeUppercase = getUserChoice();
+
+    cout << "Include Special Characters (Y/N): ";
+    includeSpecialChars = getUserChoice();
+
+    cout << "Include Digits (Y/N): ";
+    includeDigits = getUserChoice();
+
+    string password = generatePassword(length, includeLowercase, includeUppercase, includeSpecialChars, includeDigits);
+
+    while (isPasswordUsed(username, password)) {
+        password = generatePassword(length, includeLowercase, includeUppercase, includeSpecialChars, includeDigits);
     }
+
+    if (!password.empty())
+        cout << "Generated password: " << password << endl;
 
     string filename = username + "_passwords.txt";
     ofstream file(filename, std::ios::app);
     if (file.is_open()) {
-        file << generatedPassword << endl;
+        file << password << endl;
         file.close();
 
         cout << "Password saved to file: " << filename << endl;
@@ -39,11 +58,52 @@ void Password::generateAndSetPassword(const string& username) {
     }
 }
 
-string Password::generateStrongPassword() {
-    // Generate a strong password according to your criteria
-    // Implement your logic here
+string generatePassword(int length, bool includeLowercase, bool includeUppercase, bool includeSpecialChars, bool includeDigits) {
+    const string lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
+    const string uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const string specialChars = "!@#$%^&*";
+    const string digits = "0123456789";
 
-    return "strongpassword123";
+    string password;
+    srand(static_cast<unsigned int>(time(nullptr)));
+
+    string availableChars;
+    if (includeLowercase)
+        availableChars += lowercaseLetters;
+    if (includeUppercase)
+        availableChars += uppercaseLetters;
+    if (includeSpecialChars)
+        availableChars += specialChars;
+    if (includeDigits)
+        availableChars += digits;
+
+    if (length < 4 || availableChars.empty()) {
+        cout << "Invalid options. Please make sure to select at least one character type and a minimum length of 4." << endl;
+    }
+
+    if (includeLowercase)
+        password += lowercaseLetters[rand() % lowercaseLetters.length()];
+    if (includeUppercase)
+        password += uppercaseLetters[rand() % uppercaseLetters.length()];
+    if (includeSpecialChars)
+        password += specialChars[rand() % specialChars.length()];
+    if (includeDigits)
+        password += digits[rand() % digits.length()];
+
+    while (password.length() < length) {
+        char c = availableChars[rand() % availableChars.length()];
+        password += c;
+    }
+
+    std::random_shuffle(password.begin(), password.end());
+
+    return password;
+}
+
+bool getUserChoice() {
+    char choice;
+    cin >> choice;
+    return (choice == 'Y' || choice == 'y');
 }
 
 int Password::checkPasswordStrength(const string& password) {

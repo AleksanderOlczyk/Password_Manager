@@ -1,7 +1,10 @@
 #include <fstream>
 #include "loginMenu.h"
+#include "password.cpp"
 
 using std::cout, std::cin, std::endl;
+
+const string testPhrase = "VeryWeakPassword123%";
 
 /**
  * This method clears the screen.
@@ -45,26 +48,26 @@ void LoginMenu::logIn() {
     cout << "Log In" << std::endl;
 
     string username;
-    string password;
+    string masterPassword;
 
     cout << "Enter username: ";
     cin >> username;
 
     cout << "Enter password: ";
-    password = getPasswordInput();
+    masterPassword = getPasswordInput();
 
     ifstream file("users.txt");
     string line;
 
-    bool found = false;
+    bool userExist = false;
     while (getline(file, line)) {
-        if (line == username + " " + password) {
-            found = true;
+        if (line == username + " " + masterPassword) {
+            userExist = true;
             break;
         }
     }
 
-    if (found) {
+    if (userExist) {
         cout << "Login successful!" << endl;
         Menu menu;
         menu.showOptions();
@@ -92,25 +95,22 @@ string LoginMenu::getPasswordInput() {
         }
     }
 
-    cout << endl;  // Move to the next line
-
+    cout << endl;
     return password;
 }
-
-
 
 void LoginMenu::signUp() {
     clearScreen();
     cout << "Sign Up" << endl;
 
     string username;
-    string password;
+    string masterPassword;
 
     cout << "Enter username: ";
     cin >> username;
 
     cout << "Enter password: ";
-    cin >> password;
+    cin >> masterPassword;
 
     if (isRegistered(username)) {
         cout << "Username already exists. Please choose a different username." << endl;
@@ -120,7 +120,7 @@ void LoginMenu::signUp() {
     } else {
         ofstream file("users.txt", ios::app);
         if (file.is_open()) {
-            file << username << " " << password << endl;
+            file << username << " " << masterPassword << endl;
             file.close();
 
             cout << "Registration successful!" << endl;

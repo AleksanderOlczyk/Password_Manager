@@ -10,6 +10,9 @@ public:
     void showOptions();
 
 private:
+    /**
+     * This method clears the screen.
+     */
     void clearScreen();
 
     /**
@@ -22,7 +25,14 @@ private:
      */
     string getPasswordInput();
 
+    /**
+     * This method signs up the user.
+     */
     void signUp();
+
+    /**
+     * This method checks if the username is already registered.
+     */
     bool isRegistered(const std::string& username);
 };
 
