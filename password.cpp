@@ -1,13 +1,14 @@
 #include <iostream>
 #include <algorithm>
+#include <cstdlib>
+#include <ctime>
+#include <fstream>
 #include "password.h"
 
-using std::cout, std::cin, std::string, std::endl, std::ifstream, std::ofstream;
-
-bool Password::isPasswordUsed(const string& username, const string& password) {
-    string filename = username + "_passwords.txt";
-    ifstream file(filename);
-    string line;
+bool Password::isPasswordUsed(const std::string& username, const std::string& password) {
+    std::string filename = username + "_passwords.txt";
+    std::ifstream file(filename);
+    std::string line;
 
     while (getline(file, line)) {
         if (line == password) {
@@ -18,56 +19,56 @@ bool Password::isPasswordUsed(const string& username, const string& password) {
     return false;
 }
 
-void Password::generateAndSetPassword(const string& username) {
+void Password::generateAndSetPassword(const std::string& username) {
     int length;
     bool includeLowercase, includeUppercase, includeSpecialChars, includeDigits;
 
-    cout << "Password Length: ";
-    cin >> length;
+    std::cout << "Password Length: ";
+    std::cin >> length;
 
-    cout << "Include Lowercase Letters (Y/N): ";
+    std::cout << "Include Lowercase Letters (Y/N): ";
     includeLowercase = getUserChoice();
 
-    cout << "Include Uppercase Letters (Y/N): ";
+    std::cout << "Include Uppercase Letters (Y/N): ";
     includeUppercase = getUserChoice();
 
-    cout << "Include Special Characters (Y/N): ";
+    std::cout << "Include Special Characters (Y/N): ";
     includeSpecialChars = getUserChoice();
 
-    cout << "Include Digits (Y/N): ";
+    std::cout << "Include Digits (Y/N): ";
     includeDigits = getUserChoice();
 
-    string password = generatePassword(length, includeLowercase, includeUppercase, includeSpecialChars, includeDigits);
+    std::string password = generatePassword(length, includeLowercase, includeUppercase, includeSpecialChars, includeDigits);
 
     while (isPasswordUsed(username, password)) {
         password = generatePassword(length, includeLowercase, includeUppercase, includeSpecialChars, includeDigits);
     }
 
     if (!password.empty())
-        cout << "Generated password: " << password << endl;
+        std::cout << "Generated password: " << password << std::endl;
 
-    string filename = username + "_passwords.txt";
-    ofstream file(filename, std::ios::app);
+    std::string filename = username + "_passwords.txt";
+    std::ofstream file(filename, std::ios::app);
     if (file.is_open()) {
-        file << password << endl;
+        file << password << std::endl;
         file.close();
 
-        cout << "Password saved to file: " << filename << endl;
+        std::cout << "Password saved to file: " << filename << std::endl;
     } else {
-        cout << "Failed to open file for writing." << endl;
+        std::cout << "Failed to open file for writing." << std::endl;
     }
 }
 
-string generatePassword(int length, bool includeLowercase, bool includeUppercase, bool includeSpecialChars, bool includeDigits) {
-    const string lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
-    const string uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const string specialChars = "!@#$%^&*";
-    const string digits = "0123456789";
+std::string Password::generatePassword(int length, bool includeLowercase, bool includeUppercase, bool includeSpecialChars, bool includeDigits) {
+    const std::string lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
+    const std::string uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const std::string specialChars = "!@#$%^&*";
+    const std::string digits = "0123456789";
 
-    string password;
+    std::string password;
     srand(static_cast<unsigned int>(time(nullptr)));
 
-    string availableChars;
+    std::string availableChars;
     if (includeLowercase)
         availableChars += lowercaseLetters;
     if (includeUppercase)
@@ -78,7 +79,7 @@ string generatePassword(int length, bool includeLowercase, bool includeUppercase
         availableChars += digits;
 
     if (length < 4 || availableChars.empty()) {
-        cout << "Invalid options. Please make sure to select at least one character type and a minimum length of 4." << endl;
+        std::cout << "Invalid options. Please make sure to select at least one character type and a minimum length of 4." << std::endl;
     }
 
     if (includeLowercase)
@@ -100,13 +101,13 @@ string generatePassword(int length, bool includeLowercase, bool includeUppercase
     return password;
 }
 
-bool getUserChoice() {
+bool Password::getUserChoice() {
     char choice;
-    cin >> choice;
+    std::cin >> choice;
     return (choice == 'Y' || choice == 'y');
 }
 
-int Password::checkPasswordStrength(const string& password) {
+int Password::checkPasswordStrength(const std::string& password) {
     int length = password.length();
     if (length < 8) {
         return 0; // Weak password

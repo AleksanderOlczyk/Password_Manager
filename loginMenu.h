@@ -13,7 +13,9 @@ private:
     /**
      * This method clears the screen.
      */
-    void clearScreen();
+    inline void clearScreen() {
+        system("cls");
+    }
 
     /**
      * This method logs in the user.
@@ -23,7 +25,7 @@ private:
     /**
      * This method displays * instead of the actual password.
      */
-    string getPasswordInput();
+    std::string getPasswordInput();
 
     /**
      * This method signs up the user.

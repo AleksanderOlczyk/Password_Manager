@@ -1,14 +1,8 @@
 #include <iostream>
 #include "menu.h"
-#include "loginMenu.h"
 #include "password.h"
-#include "password.cpp"
 
 using namespace std;
-
-void Menu::clearScreen() {
-    system("cls");
-}
 
 void Menu::showOptions() {
     int option;

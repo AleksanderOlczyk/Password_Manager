@@ -1,17 +1,13 @@
 #include <fstream>
+#include <filesystem>
 #include "loginMenu.h"
+#include "menu.cpp"
+#include "file.cpp"
 #include "password.cpp"
 
-using std::cout, std::cin, std::endl;
+using std::cout, std::cin, std::endl, std::string;
 
 const string testPhrase = "VeryWeakPassword123%";
-
-/**
- * This method clears the screen.
- */
-void LoginMenu::clearScreen() {
-    system("cls");
-}
 
 void LoginMenu::showOptions() {
     int option;
@@ -43,6 +39,26 @@ void LoginMenu::showOptions() {
     } while (option != 0);
 }
 
+string LoginMenu::getPasswordInput() {
+    string password;
+    char c;
+
+    while ((c = _getwch()) != '\r') {
+        if (c == '\b') {
+            if (!password.empty()) {
+                cout << "\b \b";
+                password.pop_back();
+            }
+        } else {
+            cout << '*';
+            password.push_back(c);
+        }
+    }
+
+    cout << endl;
+    return password;
+}
+
 void LoginMenu::logIn() {
     clearScreen();
     cout << "Log In" << std::endl;
@@ -56,47 +72,30 @@ void LoginMenu::logIn() {
     cout << "Enter password: ";
     masterPassword = getPasswordInput();
 
-    ifstream file("users.txt");
-    string line;
+    string folderName = "users";
+    string filename = folderName + "/" + username + "_passwords.txt";
+    ifstream file(filename);
 
-    bool userExist = false;
-    while (getline(file, line)) {
-        if (line == username + " " + masterPassword) {
-            userExist = true;
-            break;
-        }
-    }
+    if (isRegistered(filename)) {
+        if (file) {
+            string encryptedPassword;
+            getline(file, encryptedPassword);
 
-    if (userExist) {
-        cout << "Login successful!" << endl;
-        Menu menu;
-        menu.showOptions();
-    } else {
-        cout << "Invalid username or password. Please try again." << endl;
-        cout << "Press enter to return to the menu..." << endl;
-        cin.ignore();
-        cin.get();
-    }
-}
+            string decryptedPhrase = File::decryptString(encryptedPassword, masterPassword);
 
-string LoginMenu::getPasswordInput() {
-    string password;
-    char c;
-
-    while ((c = _getwch()) != '\r') {  // Read characters until Enter is pressed
-        if (c == '\b') {  // Handle Backspace
-            if (!password.empty()) {
-                cout << "\b \b";  // Erase the previous character
-                password.pop_back();
+            if (decryptedPhrase == testPhrase) {
+                cout << "Login successful!" << endl;
+                Menu menu;
+                menu.showOptions();
+                return;
             }
-        } else {
-            cout << '*';
-            password.push_back(c);
         }
     }
 
-    cout << endl;
-    return password;
+    cout << "Invalid username or password. Please try again." << endl;
+    cout << "Press enter to return to the menu..." << endl;
+    cin.ignore();
+    cin.get();
 }
 
 void LoginMenu::signUp() {
@@ -109,36 +108,31 @@ void LoginMenu::signUp() {
     cout << "Enter username: ";
     cin >> username;
 
-    cout << "Enter password: ";
-    cin >> masterPassword;
+    string folderName = "users";
+    string filename = folderName + "/" + username + "_passwords.txt";
 
-    if (isRegistered(username)) {
+    if (isRegistered(filename)) {
         cout << "Username already exists. Please choose a different username." << endl;
         cout << "Press enter to return to the menu..." << endl;
         cin.ignore();
         cin.get();
     } else {
-        ofstream file("users.txt", ios::app);
+        cout << "Enter password: ";
+        cin >> masterPassword;
+
+        ofstream file(filename);
         if (file.is_open()) {
-            file << username << " " << masterPassword << endl;
+            string encryptedTestPhrase = File::encryptString(testPhrase, masterPassword);
+            file << encryptedTestPhrase << endl;
             file.close();
 
             cout << "Registration successful!" << endl;
         } else {
-            cout << "Failed to open users.txt for writing." << endl;
+            cout << "Failed to open " << filename << " for writing." << endl;
         }
     }
 }
 
-bool LoginMenu::isRegistered(const string& username) {
-    ifstream file("users.txt");
-    string line;
-
-    while (getline(file, line)) {
-        if (line.substr(0, username.length()) == username) {
-            return true;
-        }
-    }
-
-    return false;
+bool LoginMenu::isRegistered(const string& filename) {
+    return std::filesystem::exists(filename);
 }

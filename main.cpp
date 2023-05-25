@@ -1,5 +1,3 @@
-#include "menu.cpp"
-#include "loginMenu.h"
 #include "loginMenu.cpp"
 
 using namespace std;

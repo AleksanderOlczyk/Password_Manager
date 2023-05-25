@@ -17,7 +17,9 @@ private:
     /**
      * This method clears the screen.
      */
-    void clearScreen();
+    inline void clearScreen() {
+        system("cls");
+    }
 
     /**
      * This method executes the action.
