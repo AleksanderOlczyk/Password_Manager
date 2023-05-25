@@ -8,6 +8,8 @@
 using std::cout, std::cin, std::endl, std::string;
 
 const string testPhrase = "VeryWeakPassword123%";
+std::string LoginMenu::masterPassword;
+std::string LoginMenu::username;
 
 void LoginMenu::showOptions() {
     int option;
@@ -39,38 +41,15 @@ void LoginMenu::showOptions() {
     } while (option != 0);
 }
 
-string LoginMenu::getPasswordInput() {
-    string password;
-    char c;
-
-    while ((c = _getwch()) != '\r') {
-        if (c == '\b') {
-            if (!password.empty()) {
-                cout << "\b \b";
-                password.pop_back();
-            }
-        } else {
-            cout << '*';
-            password.push_back(c);
-        }
-    }
-
-    cout << endl;
-    return password;
-}
-
 void LoginMenu::logIn() {
     clearScreen();
     cout << "Log In" << std::endl;
-
-    string username;
-    string masterPassword;
 
     cout << "Enter username: ";
     cin >> username;
 
     cout << "Enter password: ";
-    masterPassword = getPasswordInput();
+    LoginMenu::masterPassword = Password::getPasswordInput();
 
     string folderName = "users";
     string filename = folderName + "/" + username + "_passwords.txt";
@@ -101,9 +80,6 @@ void LoginMenu::logIn() {
 void LoginMenu::signUp() {
     clearScreen();
     cout << "Sign Up" << endl;
-
-    string username;
-    string masterPassword;
 
     cout << "Enter username: ";
     cin >> username;

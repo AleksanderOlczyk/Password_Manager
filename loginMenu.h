@@ -7,6 +7,8 @@
 
 class LoginMenu {
 public:
+    static std::string masterPassword;
+    static std::string username;
     void showOptions();
 
 private:
@@ -21,11 +23,6 @@ private:
      * This method logs in the user.
      */
     void logIn();
-
-    /**
-     * This method displays * instead of the actual password.
-     */
-    std::string getPasswordInput();
 
     /**
      * This method signs up the user.

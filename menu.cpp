@@ -1,6 +1,7 @@
 #include <iostream>
 #include "menu.h"
 #include "password.h"
+#include "file.h"
 
 using namespace std;
 
@@ -75,15 +76,23 @@ void Menu::addUserPassword() {
     cout << "Enter your username: ";
     cin >> username;
 
-    cout << "Enter your password: ";
-    cin >> password;
+    cout << "Do you want to generate a password? (y/n): ";
+    char choice;
+    cin >> choice;
+
+    if (choice == 'y' || choice == 'Y') {
+        Password::generateAndSetPassword(username);
+        return;
+    } else {
+        cout << "Enter your password: ";
+        password = Password::getPasswordInput();
+    }
 
     // Check if the password has been used before
     if (Password::isPasswordUsed(username, password)) {
         cout << "This password has been used before." << endl;
         cout << "Do you want to set a new password? (y/n): ";
 
-        char choice;
         cin >> choice;
 
         if (choice == 'y' || choice == 'Y') {
@@ -105,7 +114,7 @@ void Menu::addUserPassword() {
     string filename = username + "_passwords.txt";
     ofstream file(filename, ios::app);
     if (file.is_open()) {
-        file << password << endl;
+        file << File::encryptString(password, LoginMenu::masterPassword) << endl;
         file.close();
 
         cout << "Password saved to file: " << filename << endl;

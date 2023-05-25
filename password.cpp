@@ -6,7 +6,9 @@
 #include "password.h"
 
 bool Password::isPasswordUsed(const std::string& username, const std::string& password) {
-    std::string filename = username + "_passwords.txt";
+    string folderName = "users";
+    string filename = folderName + "/" + username + "_passwords.txt";
+
     std::ifstream file(filename);
     std::string line;
 
@@ -19,7 +21,7 @@ bool Password::isPasswordUsed(const std::string& username, const std::string& pa
     return false;
 }
 
-void Password::generateAndSetPassword(const std::string& username) {
+void Password::generateAndSetPassword(const std::string& filename) {
     int length;
     bool includeLowercase, includeUppercase, includeSpecialChars, includeDigits;
 
@@ -40,17 +42,16 @@ void Password::generateAndSetPassword(const std::string& username) {
 
     std::string password = generatePassword(length, includeLowercase, includeUppercase, includeSpecialChars, includeDigits);
 
-    while (isPasswordUsed(username, password)) {
+    while (isPasswordUsed(filename, password)) {
         password = generatePassword(length, includeLowercase, includeUppercase, includeSpecialChars, includeDigits);
     }
 
     if (!password.empty())
         std::cout << "Generated password: " << password << std::endl;
 
-    std::string filename = username + "_passwords.txt";
     std::ofstream file(filename, std::ios::app);
     if (file.is_open()) {
-        file << password << std::endl;
+        file << File::encryptString(password, LoginMenu::masterPassword) << std::endl;
         file.close();
 
         std::cout << "Password saved to file: " << filename << std::endl;
@@ -164,4 +165,24 @@ int Password::checkPasswordStrength(const std::string& password) {
     }
 
     return strength;
+}
+
+string Password::getPasswordInput() {
+    string password;
+    char c;
+
+    while ((c = _getwch()) != '\r') {
+        if (c == '\b') {
+            if (!password.empty()) {
+                cout << "\b \b";
+                password.pop_back();
+            }
+        } else {
+            cout << '*';
+            password.push_back(c);
+        }
+    }
+
+    cout << endl;
+    return password;
 }
