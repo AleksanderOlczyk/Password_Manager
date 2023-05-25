@@ -1,20 +1,12 @@
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
 #include "menu.h"
 
 using namespace std;
 
-/**
- * This method clears the screen.
- */
 void Menu::clearScreen() {
     system("cls");
 }
 
-/**
- * This method shows the menu options.
- */
 void Menu::showOptions() {
     int option;
 
@@ -42,10 +34,6 @@ void Menu::showOptions() {
     } while (option != 0);
 }
 
-/**
- * This method executes the action.
- * @param option - action number
- */
 void Menu::doAction(int option) {
     clearScreen();
 
@@ -79,9 +67,6 @@ void Menu::doAction(int option) {
     cin.get();
 }
 
-/**
- * This method adds a password.
- */
 void Menu::addUserPassword() {
     string password;
 
@@ -106,11 +91,6 @@ void Menu::addUserPassword() {
     cin.get();
 }
 
-/**
- * This method checks the strength of a password.
- * @param password - password to check
- * @return strength level (0 - weak, 1 - medium, 2 - strong)
- */
 int Menu::checkPasswordStrength(const string& password) {
     int length = password.length();
     if (length < 8) {
@@ -170,11 +150,6 @@ int Menu::checkPasswordStrength(const string& password) {
     return strength;
 }
 
-/**
- * This method checks if a password has been used before.
- * @param password - password to check
- * @return true if the password has been used before, false otherwise
- */
 bool Menu::isPasswordUsed(const string& password) {
     // TODO: Implement password checking logic
     return false;
