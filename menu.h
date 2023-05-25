@@ -42,7 +42,16 @@ private:
      * @param password - password to check
      * @return true if the password has been used before, false otherwise
      */
-    bool isPasswordUsed(const string &password);
+    bool isPasswordUsed(const string &username, const string &password);
+
+    void generateAndSetPassword(const string &username);
+
+    string generateStrongPassword();
+
+    /**
+     * This method signs out.
+     */
+    void logOut();
 };
 
 #endif

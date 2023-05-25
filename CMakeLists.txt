@@ -3,4 +3,4 @@ project(projekt01)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(projekt01 main.cpp menu.cpp loginMenu.cpp)
+add_executable(projekt01 main.cpp menu.cpp loginMenu.cpp password.cpp)
