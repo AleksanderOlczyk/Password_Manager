@@ -22,7 +22,7 @@ private:
     /**
      * This method logs in the user.
      */
-    void logIn();
+    void logIn(const std::string& filename);
 
     /**
      * This method signs up the user.
@@ -33,6 +33,10 @@ private:
      * This method checks if the username is already registered.
      */
     bool isRegistered(const std::string& username);
+
+    void chooseFile();
+
+    void provideFilePath();
 };
 
 #endif
