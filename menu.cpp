@@ -5,8 +5,12 @@
 
 using namespace std;
 
-void Menu::showOptions() {
+string masterPassword;
+string filePath;
+
+void Menu::showOptions(const std::string& masterKey) {
     int option;
+    masterPassword = masterKey;
 
     do {
         clearScreen();
@@ -22,7 +26,6 @@ void Menu::showOptions() {
         cout << "0. Exit" << endl;
         cout << "Choose option: ";
 
-        // Check if the input is a number.
         while (!(cin >> option) || option < 0 || option > 8) {
             cout << "Invalid input. Please enter a valid option: ";
             cin.clear();
@@ -70,60 +73,89 @@ void Menu::doAction(int option) {
 }
 
 void Menu::addUserPassword() {
-    string password;
-    string username;
+    int option;
 
-    cout << "Enter your fileName: ";
-    cin >> username;
+    do {
+        clearScreen();
+        cout << "Add password:" << endl;
+        cout << "1. Set password name (mandatory)" << endl;
+        cout << "2. Set password (mandatory)" << endl;
+        cout << "3. Set category (mandatory)" << endl;
+        cout << "4. Set site url / service" << endl;
+        cout << "5. Set login" << endl;
+        cout << "0. Return" << endl;
+        cout << "Choose option: ";
 
-    cout << "Do you want to generate a password? (y/n): ";
-    char choice;
-    cin >> choice;
-
-    if (choice == 'y' || choice == 'Y') {
-        Password::generateAndSetPassword(username);
-        return;
-    } else {
-        cout << "Enter your password: ";
-        password = Password::getPasswordInput();
-    }
-
-    // Check if the password has been used before
-    if (Password::isPasswordUsed(username, password)) {
-        cout << "This password has been used before." << endl;
-        cout << "Do you want to set a new password? (y/n): ";
-
-        cin >> choice;
-
-        if (choice == 'y' || choice == 'Y') {
-            Password::generateAndSetPassword(username);
-            return;
+        if (!(cin >> option) || option < 0 || option > 5) {
+            cout << "Invalid input. Please enter a valid option: ";
+            cin.clear();
+            cin.ignore();
         }
+    } while (option < 0 || option > 5);
+
+    string name;
+    string password;
+    string category;
+    string service;
+    string login;
+
+    switch (option) {
+        case 0:
+            showOptions(masterPassword);
+            break;
+        case 1:
+            cout << "Enter password name: ";
+            cin >> name;
+            break;
+        case 2: {
+            cout << "Do you want to generate a password? (y/n): ";
+            char choice;
+            cin >> choice;
+
+            if (choice == 'y' || choice == 'Y') {
+                Password::generateAndSetPassword(masterPassword);
+            } else {
+                cout << "Enter your password: ";
+                password = Password::getPasswordInput();
+            }
+
+            if (Password::isPasswordUsed(password)) {
+                cout << "This password has been used before." << endl;
+                cout << "Do you want to set a new password? (y/n): ";
+
+                cin >> choice;
+                if (choice == 'y' || choice == 'Y') {
+                    Password::generateAndSetPassword(masterPassword);
+                } else {
+                    cout << "Enter your password: ";
+                    password = Password::getPasswordInput();
+                }
+            }
+
+            int strength = Password::checkPasswordStrength(password);
+            if (strength >= 3) {
+                cout << "Your password is strong: " << strength << "/4." << endl;
+            } else {
+                cout << "Your password is weak: " << strength << "/4." << endl;
+            }
+
+            cin.ignore();
+            cin.get();
+            break;
+        }
+        case 3:
+            cout << "Enter category: ";
+            cin >> category;
+            break;
+        case 4:
+            cout << "Enter site url / service: ";
+            cin >> service;
+            break;
+        case 5:
+            cout << "Enter login: ";
+            cin >> login;
+            break;
     }
-
-    // Check password strength
-    int strength = Password::checkPasswordStrength(password);
-
-    if (strength >= 3) {
-        cout << "Your password is strong: " << strength << "/4." << endl;
-    } else {
-        cout << "Your password is weak: " << strength << "/4." << endl;
-    }
-
-    // Save the password to file
-    string filename = username + "_passwords.txt";
-    ofstream file(filename, ios::app);
-    if (file.is_open()) {
-        file << File::encryptString(password, LoginMenu::masterPassword) << endl;
-        file.close();
-
-        cout << "Password saved to file: " << filename << endl;
-    } else {
-        cout << "Failed to open file for writing." << endl;
-    }
-
-    cin.ignore();
-    cin.get();
 }
 
 void Menu::logOut() {

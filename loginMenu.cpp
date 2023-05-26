@@ -8,8 +8,6 @@
 using std::cout, std::cin, std::endl, std::string;
 
 const string testPhrase = "VeryWeakPassword123%";
-std::string LoginMenu::masterPassword;
-std::string LoginMenu::fileName;
 
 void LoginMenu::showOptions() {
     int option;
@@ -51,21 +49,22 @@ void LoginMenu::logIn(const string& filename) {
 
     cout << "Selected file: " << filename << endl;
     cout << "Enter password: ";
-    masterPassword = Password::getPasswordInput();
+    string masterPassword = Password::getPasswordInput();
 
     string folderName = "users";
-    ifstream file(folderName + "/" + filename);
+    string fileAbsolutPath = folderName + "/" + filename;
+    ifstream file(fileAbsolutPath);
 
     if (file) {
         string encryptedPassword;
         getline(file, encryptedPassword);
 
-        string decryptedPhrase = File::decryptString(encryptedPassword, masterPassword);
+        string decryptedPhrase = File::decryptTestPhrase(encryptedPassword, masterPassword);
 
         if (decryptedPhrase == testPhrase) {
             cout << "Login successful!" << endl;
             Menu menu;
-            menu.showOptions();
+            menu.showOptions(masterPassword);
             return;
         }
     }
@@ -80,36 +79,38 @@ void LoginMenu::signUp() {
     clearScreen();
     cout << "Create file" << endl;
 
+    string fileName;
     cout << "Enter file name: ";
     cin >> fileName;
 
     string folderName = "users";
-    string filename = folderName + "/" + fileName + ".txt";
+    string fileAbsolutPath = folderName + "/" + fileName + ".txt";
 
-    if (isRegistered(filename)) {
+    if (isRegistered(fileAbsolutPath)) {
         cout << "File name already exists. Please choose a different fileName." << endl;
         cout << "Press enter to return to the menu..." << endl;
         cin.ignore();
         cin.get();
     } else {
+        string masterPassword;
         cout << "Enter password: ";
         cin >> masterPassword;
 
-        ofstream file(filename);
+        ofstream file(fileAbsolutPath);
         if (file.is_open()) {
-            string encryptedTestPhrase = File::encryptString(testPhrase, masterPassword);
+            string encryptedTestPhrase = File::encryptTestPhrase(testPhrase, masterPassword);
             file << encryptedTestPhrase << endl;
             file.close();
 
             cout << "Registration successful!" << endl;
         } else {
-            cout << "Failed to open " << filename << " for writing." << endl;
+            cout << "Failed to open " << fileAbsolutPath << " for writing." << endl;
         }
     }
 }
 
-bool LoginMenu::isRegistered(const string& filename) {
-    return std::filesystem::exists(filename);
+bool LoginMenu::isRegistered(const string& fileAbsolutPath) {
+    return std::filesystem::exists(fileAbsolutPath);
 }
 
 void LoginMenu::chooseFile() {
@@ -154,5 +155,38 @@ void LoginMenu::chooseFile() {
 
 
 void LoginMenu::provideFilePath() {
+    clearScreen();
+    string extension = ".txt";
+    string filePath;
 
+    cout << "Enter the file path (including the .txt extension): ";
+    cin >> filePath;
+
+    if (filePath.size() < extension.size() || !std::equal(extension.rbegin(), extension.rend(), filePath.rbegin())) {
+        cout << "Invalid file path. The file should have the .txt extension." << endl;
+    } else {
+        if (!std::filesystem::exists(filePath)) {
+            cout << "The specified file does not exist." << endl;
+        } else {
+            ifstream file(filePath);
+            if (file) {
+                string encryptedPassword;
+                getline(file, encryptedPassword);
+
+                string decryptedPhrase = File::decryptTestPhrase(encryptedPassword, masterPassword);
+
+                if (decryptedPhrase == testPhrase) {
+                    cout << "Login successful!" << endl;
+                    Menu menu;
+                    menu.showOptions(masterPassword);
+                    return;
+                }
+            }
+        }
+    }
+
+    cout << "Invalid fileName or password. Please try again." << endl;
+    cout << "Press enter to return to the menu..." << endl;
+    cin.ignore();
+    cin.get();
 }

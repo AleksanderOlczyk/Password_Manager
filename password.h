@@ -5,8 +5,19 @@
 
 class Password {
 public:
-    static bool isPasswordUsed(const std::string& username, const std::string& password);
-    static void generateAndSetPassword(const std::string& fileName);
+    /**
+     * This method checks if the password has been used before.
+     */
+    static bool isPasswordUsed(const std::string& password);
+
+    /**
+     * This method generates a random password and saves it to a file.
+     */
+    static void generateAndSetPassword(const std::string& masterPassword);
+
+    /**
+     * This method checks if the password strength.
+     */
     static int checkPasswordStrength(const std::string& password);
 
     /**
@@ -15,7 +26,14 @@ public:
     static string getPasswordInput();
 
 private:
+    /**
+     * This method generates a random password.
+     */
     static std::string generatePassword(int length, bool includeLowercase, bool includeUppercase, bool includeSpecialChars, bool includeDigits);
+
+    /**
+     * This method checks what user want to do.
+     */
     static bool getUserChoice();
 
 };

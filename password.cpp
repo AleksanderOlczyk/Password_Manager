@@ -5,11 +5,8 @@
 #include <fstream>
 #include "password.h"
 
-bool Password::isPasswordUsed(const std::string& username, const std::string& password) {
-    string folderName = "users";
-    string filename = folderName + "/" + username + "_passwords.txt";
-
-    std::ifstream file(filename);
+bool Password::isPasswordUsed(const std::string& password) {
+    std::ifstream file(filePath);
     std::string line;
 
     while (getline(file, line)) {
@@ -21,7 +18,7 @@ bool Password::isPasswordUsed(const std::string& username, const std::string& pa
     return false;
 }
 
-void Password::generateAndSetPassword(const std::string& filename) {
+void Password::generateAndSetPassword(const std::string& masterPassword) {
     int length;
     bool includeLowercase, includeUppercase, includeSpecialChars, includeDigits;
 
@@ -42,19 +39,19 @@ void Password::generateAndSetPassword(const std::string& filename) {
 
     std::string password = generatePassword(length, includeLowercase, includeUppercase, includeSpecialChars, includeDigits);
 
-    while (isPasswordUsed(filename, password)) {
+    while (isPasswordUsed(password)) {
         password = generatePassword(length, includeLowercase, includeUppercase, includeSpecialChars, includeDigits);
     }
 
     if (!password.empty())
         std::cout << "Generated password: " << password << std::endl;
 
-    std::ofstream file(filename, std::ios::app);
+    std::ofstream file(filePath, std::ios::app);
     if (file.is_open()) {
-        file << File::encryptString(password, LoginMenu::masterPassword) << std::endl;
+        file << File::encryptTestPhrase(password, masterPassword) << std::endl;
         file.close();
 
-        std::cout << "Password saved to file: " << filename << std::endl;
+        std::cout << "Password saved to file: " << filePath << std::endl;
     } else {
         std::cout << "Failed to open file for writing." << std::endl;
     }

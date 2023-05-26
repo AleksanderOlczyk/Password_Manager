@@ -7,8 +7,6 @@
 
 class LoginMenu {
 public:
-    static std::string masterPassword;
-    static std::string fileName;
     void showOptions();
 
 private:
@@ -34,8 +32,14 @@ private:
      */
     bool isRegistered(const std::string& username);
 
+    /**
+     * This method shows all file in folder /users.
+     */
     void chooseFile();
 
+    /**
+     * This method get the file path from user.
+     */
     void provideFilePath();
 };
 

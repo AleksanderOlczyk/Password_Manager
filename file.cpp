@@ -1,28 +1,29 @@
 #include <fstream>
 #include "file.h"
 
-std::string File::encryptString(const std::string& str, const std::string& appPassword) {
+std::string File::encryptTestPhrase(const std::string& str, const std::string& key) {
     std::string encryptedStr = str;
-    std::string key = LoginMenu::masterPassword;
     for (size_t i = 0; i < encryptedStr.length(); i++) {
         encryptedStr[i] = str[i] ^ key[i % key.length()];
     }
     return encryptedStr;
 }
 
-std::string File::decryptString(const std::string& str, const std::string& key) {
-    return encryptString(str, key); //Encryption and decryption are the same
+std::string File::decryptTestPhrase(const std::string& str, const std::string& key) {
+    return encryptTestPhrase(str, key); //Encryption and decryption are the same
 }
 
 bool File::saveToFile(const std::string& filename, const std::string& content) {
+    std::string encryptedContent = encryptTestPhrase(content, masterPassword);
     std::ofstream file(filename);
     if (!file.is_open()) {
         return false;
     }
-    file << content;
+    file << encryptedContent;
     file.close();
     return true;
 }
+
 
 std::string File::readFromFile(const std::string& filename) {
     std::ifstream file(filename);
