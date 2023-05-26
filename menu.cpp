@@ -73,7 +73,7 @@ void Menu::addUserPassword() {
     string password;
     string username;
 
-    cout << "Enter your username: ";
+    cout << "Enter your fileName: ";
     cin >> username;
 
     cout << "Do you want to generate a password? (y/n): ";

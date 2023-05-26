@@ -8,7 +8,7 @@
 class LoginMenu {
 public:
     static std::string masterPassword;
-    static std::string username;
+    static std::string fileName;
     void showOptions();
 
 private:
@@ -30,7 +30,7 @@ private:
     void signUp();
 
     /**
-     * This method checks if the username is already registered.
+     * This method checks if the fileName is already registered.
      */
     bool isRegistered(const std::string& username);
 

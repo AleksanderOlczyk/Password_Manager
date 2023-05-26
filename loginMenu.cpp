@@ -9,7 +9,7 @@ using std::cout, std::cin, std::endl, std::string;
 
 const string testPhrase = "VeryWeakPassword123%";
 std::string LoginMenu::masterPassword;
-std::string LoginMenu::username;
+std::string LoginMenu::fileName;
 
 void LoginMenu::showOptions() {
     int option;
@@ -18,11 +18,12 @@ void LoginMenu::showOptions() {
         clearScreen();
         cout << "Login Menu:" << endl;
         cout << "1. Chose file" << endl;
-        cout << "2. Provide file absolut path" << endl;
+        cout << "2. Provide file absolut path" << endl << endl;
+        cout << "3. Create new file" << endl;
         cout << "0. Exit" << endl;
         cout << "Choose option: ";
 
-        while (!(cin >> option) || option < 0 || option > 2) {
+        while (!(cin >> option) || option < 0 || option > 3) {
             cout << "Invalid input. Please enter a valid option: ";
             cin.clear();
             cin.ignore();
@@ -36,6 +37,9 @@ void LoginMenu::showOptions() {
                 break;
             case 2:
                 provideFilePath();
+                break;
+            case 3:
+                signUp();
                 break;
         }
     } while (option != 0);
@@ -66,24 +70,24 @@ void LoginMenu::logIn(const string& filename) {
         }
     }
 
-    cout << "Invalid username or password. Please try again." << endl;
+    cout << "Invalid fileName or password. Please try again." << endl;
     cout << "Press enter to return to the menu..." << endl;
-    cin.ignore(10000, '\n');
+    cin.ignore();
     cin.get();
 }
 
 void LoginMenu::signUp() {
     clearScreen();
-    cout << "Sign Up" << endl;
+    cout << "Create file" << endl;
 
-    cout << "Enter username: ";
-    cin >> username;
+    cout << "Enter file name: ";
+    cin >> fileName;
 
     string folderName = "users";
-    string filename = folderName + "/" + username + "_passwords.txt";
+    string filename = folderName + "/" + fileName + ".txt";
 
     if (isRegistered(filename)) {
-        cout << "Username already exists. Please choose a different username." << endl;
+        cout << "File name already exists. Please choose a different fileName." << endl;
         cout << "Press enter to return to the menu..." << endl;
         cin.ignore();
         cin.get();
@@ -136,7 +140,7 @@ void LoginMenu::chooseFile() {
         while (!(cin >> choice) || choice < 1 || choice > files.size()) {
             cout << "Invalid input. Please enter a valid choice: ";
             cin.clear();
-            cin.ignore(10000, '\n');
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
 
         string selectedFile = files[choice - 1];
