@@ -59,7 +59,7 @@ void LoginMenu::logIn(const string& filename) {
         string encryptedPassword;
         getline(file, encryptedPassword);
 
-        string decryptedPhrase = File::decryptTestPhrase(encryptedPassword, masterPassword);
+        string decryptedPhrase = File::decryptPhrase(encryptedPassword, masterPassword);
 
         if (decryptedPhrase == testPhrase) {
             cout << "Login successful!" << endl;
@@ -98,7 +98,7 @@ void LoginMenu::signUp() {
 
         ofstream file(fileAbsolutPath);
         if (file.is_open()) {
-            string encryptedTestPhrase = File::encryptTestPhrase(testPhrase, masterPassword);
+            string encryptedTestPhrase = File::encryptPhrase(testPhrase, masterPassword);
             file << encryptedTestPhrase << endl;
             file.close();
 
@@ -173,7 +173,7 @@ void LoginMenu::provideFilePath() {
                 string encryptedPassword;
                 getline(file, encryptedPassword);
 
-                string decryptedPhrase = File::decryptTestPhrase(encryptedPassword, masterPassword);
+                string decryptedPhrase = File::decryptPhrase(encryptedPassword, masterPassword);
 
                 if (decryptedPhrase == testPhrase) {
                     cout << "Login successful!" << endl;

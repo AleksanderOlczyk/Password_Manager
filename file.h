@@ -5,10 +5,13 @@
 
 class File {
 public:
-    static std::string encryptTestPhrase(const std::string& str, const std::string& key);
-    static std::string decryptTestPhrase(const std::string& str, const std::string& key);
-    static bool saveToFile(const std::string& filename, const std::string& content);
+    static std::string encryptPhrase(const std::string& str, const std::string& key);
+    static std::string decryptPhrase(const std::string& str, const std::string& key);
+    static bool saveToFile(const std::string& content);
     static std::string readFromFile(const std::string& filename);
+
+    static void savePassword(const string &name, const string &password, const string &category, const string &service,
+                             const string &login);
 };
 
 #endif

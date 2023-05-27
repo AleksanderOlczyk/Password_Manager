@@ -1,7 +1,7 @@
 #include <fstream>
 #include "file.h"
 
-std::string File::encryptTestPhrase(const std::string& str, const std::string& key) {
+std::string File::encryptPhrase(const std::string& str, const std::string& key) {
     std::string encryptedStr = str;
     for (size_t i = 0; i < encryptedStr.length(); i++) {
         encryptedStr[i] = str[i] ^ key[i % key.length()];
@@ -9,13 +9,18 @@ std::string File::encryptTestPhrase(const std::string& str, const std::string& k
     return encryptedStr;
 }
 
-std::string File::decryptTestPhrase(const std::string& str, const std::string& key) {
-    return encryptTestPhrase(str, key); //Encryption and decryption are the same
+std::string File::decryptPhrase(const std::string& str, const std::string& key) {
+    return encryptPhrase(str, key); //Encryption and decryption are the same
 }
 
-bool File::saveToFile(const std::string& filename, const std::string& content) {
-    std::string encryptedContent = encryptTestPhrase(content, masterPassword);
-    std::ofstream file(filename);
+void File::savePassword(const std::string& name, const std::string& password, const std::string& category, const std::string& service, const std::string& login) {
+    std::string content = name + "::" + password + "::" + category + "::" + service + "::" + login + "\n";
+    saveToFile(content);
+}
+
+bool File::saveToFile(const std::string& content) {
+    std::string encryptedContent = encryptPhrase(content, masterPassword);
+    std::ofstream file(filePath);
     if (!file.is_open()) {
         return false;
     }

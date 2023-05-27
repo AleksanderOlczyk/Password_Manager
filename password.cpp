@@ -48,7 +48,7 @@ void Password::generateAndSetPassword(const std::string& masterPassword) {
 
     std::ofstream file(filePath, std::ios::app);
     if (file.is_open()) {
-        file << File::encryptTestPhrase(password, masterPassword) << std::endl;
+        file << File::encryptPhrase(password, masterPassword) << std::endl;
         file.close();
 
         std::cout << "Password saved to file: " << filePath << std::endl;
