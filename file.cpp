@@ -18,19 +18,41 @@ void File::savePassword(const std::string& name, const std::string& password, co
     saveToFile(content);
 }
 
-bool File::saveToFile(const std::string& content) {
-    std::string encryptedContent = encryptPhrase(content, masterPassword);
-    std::ofstream file(filePath);
+void File::saveToFile(const std::string& filename, const std::string& masterPassword, const std::vector<std::string>& names, const std::vector<std::string>& passwords, const std::vector<std::string>& categories, const std::vector<std::string>& services, const std::vector<std::string>& logins) {
+    std::ofstream file(filename);
     if (!file.is_open()) {
-        return false;
+        std::cout << "Failed to open file for writing." << std::endl;
+        return;
     }
-    file << encryptedContent;
+
+    // Encrypt the test phrase and write it on the first line
+    std::string encryptedTestPhrase = encryptPhrase(testPhrase, masterPassword);
+    file << encryptedTestPhrase << std::endl;
+
+    // Save the data in the specified format
+    for (size_t i = 0; i < names.size(); i++) {
+        std::string encryptedName = encryptString(names[i], masterPassword);
+        std::string encryptedPassword = encryptString(passwords[i], masterPassword);
+        std::string encryptedCategory = encryptString(categories[i], masterPassword);
+        std::string encryptedService = encryptString(services[i], masterPassword);
+        std::string encryptedLogin = encryptString(logins[i], masterPassword);
+
+        file << encryptedName << "::" << encryptedPassword << "::" << encryptedCategory << "::" << encryptedService << "::" << encryptedLogin << std::endl;
+    }
+
     file.close();
-    return true;
+    std::cout << "Data saved to file: " << filename << std::endl;
 }
 
+std::string File::encryptString(const std::string& str, const std::string& key) {
+    std::string encryptedStr = str;
+    for (size_t i = 0; i < encryptedStr.length(); i++) {
+        encryptedStr[i] = str[i] ^ key[i % key.length()];
+    }
+    return encryptedStr;
+}
 
-std::string File::readFromFile(const std::string& filename) {
+void File::readFromFile(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         return ""; //Failed to open file
