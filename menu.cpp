@@ -7,8 +7,9 @@ using namespace std;
 
 string masterPassword;
 string filePath;
-string testPhrase;
+std::vector<std::string> allCategories = {"Work", "Social media", "none"};
 
+string testPhrase;
 std::vector<std::string> names;
 std::vector<std::string> passwords;
 std::vector<std::string> categories;

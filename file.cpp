@@ -75,32 +75,20 @@ void File::readFromFile() {
         return;
     }
 
-    // Read the encrypted test phrase from the first line
-    std::string encryptedTestPhrase;
-    std::getline(file, encryptedTestPhrase);
-
-    // Decrypt the test phrase
-    std::string decryptedTestPhrase = decryptPhrase(encryptedTestPhrase, masterPassword);
-    if (decryptedTestPhrase != testPhrase) {
-        std::cout << "Incorrect master password. Cannot decrypt the data." << std::endl;
-        return;
-    }
-
-    // Read the categories from the second line
     std::string categoriesLine;
     std::getline(file, categoriesLine);
 
-    // Decrypt and split the categories
+    //Decrypt and split the categories
     std::string decryptedCategoriesLine = decryptString(categoriesLine, masterPassword);
     std::vector<std::string> decryptedCategories = splitString(decryptedCategoriesLine, "::");
     categories.assign(decryptedCategories.begin(), decryptedCategories.end());
 
     std::string line;
     while (std::getline(file, line)) {
-        // Decrypt the line
+        //Decrypt the line
         std::string decryptedLine = decryptString(line, masterPassword);
 
-        // Split the decrypted line into data fields
+        //Split the decrypted line into data fields
         std::vector<std::string> dataFields = splitString(decryptedLine, "::");
         if (dataFields.size() == 5) {
             names.push_back(dataFields[0]);
@@ -110,6 +98,5 @@ void File::readFromFile() {
             logins.push_back(dataFields[4]);
         }
     }
-
     file.close();
 }
