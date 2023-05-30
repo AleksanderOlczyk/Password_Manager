@@ -7,10 +7,21 @@ using namespace std;
 
 string masterPassword;
 string filePath;
+//string testPhrase;
 
-void Menu::showOptions(const std::string& masterKey) {
+std::vector<std::string> names;
+std::vector<std::string> passwords;
+std::vector<std::string> categories;
+std::vector<std::string> services;
+std::vector<std::string> logins;
+
+void Menu::showOptions(const std::string& masterKey, const std::string& fileAbsolutePath, const std::string& test) {
     int option;
     masterPassword = masterKey;
+    filePath = filePath;
+    testPhrase = test;
+
+    File::readFromFile(filePath, testPhrase);
 
     do {
         clearScreen();
@@ -36,24 +47,30 @@ void Menu::showOptions(const std::string& masterKey) {
             case 0:
                 exit(0);
             case 1:
+//                findPaswords();
                 cout << "Opcja numer 1" << endl;
                 break;
             case 2:
+//                sortPasswors();
                 cout << "Opcja numer 2" << endl;
                 break;
             case 3:
                 addUserPassword();
                 break;
             case 4:
+//                editPassword();
                 cout << "Opcja numer 4" << endl;
                 break;
             case 5:
+//                deletePassword();
                 cout << "Opcja numer 5" << endl;
                 break;
             case 6:
+//                addCategory();
                 cout << "Opcja numer 6" << endl;
                 break;
             case 7:
+//                deleteCategory();
                 cout << "Opcja numer 7" << endl;
                 break;
             case 8:
@@ -171,7 +188,12 @@ void Menu::addUserPassword() {
             cin >> choice;
 
             if (choice == 'y' || choice == 'Y') {
-                File::savePassword(name, password, category, service, login);
+                names.push_back(name);
+                passwords.push_back(password);
+                categories.push_back(category);
+                services.push_back(service);
+                logins.push_back(login);
+                File::saveToFile();
             } else {
                 cout << "Password not saved." << endl;
                 addUserPassword();

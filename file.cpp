@@ -13,13 +13,8 @@ std::string File::decryptPhrase(const std::string& str, const std::string& key) 
     return encryptPhrase(str, key); //Encryption and decryption are the same
 }
 
-void File::savePassword(const std::string& name, const std::string& password, const std::string& category, const std::string& service, const std::string& login) {
-    std::string content = name + "::" + password + "::" + category + "::" + service + "::" + login + "\n";
-    saveToFile(content);
-}
-
-void File::saveToFile(const std::string& filename, const std::string& masterPassword, const std::vector<std::string>& names, const std::vector<std::string>& passwords, const std::vector<std::string>& categories, const std::vector<std::string>& services, const std::vector<std::string>& logins) {
-    std::ofstream file(filename);
+void File::saveToFile() {
+    std::ofstream file(filePath);
     if (!file.is_open()) {
         std::cout << "Failed to open file for writing." << std::endl;
         return;
@@ -41,7 +36,7 @@ void File::saveToFile(const std::string& filename, const std::string& masterPass
     }
 
     file.close();
-    std::cout << "Data saved to file: " << filename << std::endl;
+    std::cout << "Data saved to file: " << filePath << std::endl;
 }
 
 std::string File::encryptString(const std::string& str, const std::string& key) {
@@ -52,13 +47,68 @@ std::string File::encryptString(const std::string& str, const std::string& key) 
     return encryptedStr;
 }
 
-void File::readFromFile(const std::string& filename) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        return ""; //Failed to open file
+std::string File::decryptString(const std::string& str, const std::string& key) {
+    return encryptString(str, key); //Encryption and decryption are the same
+}
+
+std::vector<std::string> File::splitString(const std::string& str, const std::string& delimiter) {
+    std::vector<std::string> tokens;
+    size_t start = 0;
+    size_t end = str.find(delimiter);
+
+    while (end != std::string::npos) {
+        tokens.push_back(str.substr(start, end - start));
+        start = end + delimiter.length();
+        end = str.find(delimiter, start);
     }
-    std::string content((std::istreambuf_iterator<char>(file)),
-                        (std::istreambuf_iterator<char>()));
+
+    tokens.push_back(str.substr(start, end));
+
+    return tokens;
+}
+
+void File::readFromFile() {
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cout << "Failed to open file for reading." << std::endl;
+        return;
+    }
+
+    // Read the encrypted test phrase from the first line
+    std::string encryptedTestPhrase;
+    std::getline(file, encryptedTestPhrase);
+
+    // Decrypt the test phrase
+    std::string decryptedTestPhrase = decryptPhrase(encryptedTestPhrase, masterPassword);
+    if (decryptedTestPhrase != testPhrase) {
+        std::cout << "Incorrect master password. Cannot decrypt the data." << std::endl;
+        return;
+    }
+
+    // Read the categories from the second line
+    std::string categoriesLine;
+    std::getline(file, categoriesLine);
+
+    // Decrypt and split the categories
+    std::string decryptedCategoriesLine = decryptString(categoriesLine, masterPassword);
+    std::vector<std::string> decryptedCategories = splitString(decryptedCategoriesLine, "::");
+    categories.assign(decryptedCategories.begin(), decryptedCategories.end());
+
+    std::string line;
+    while (std::getline(file, line)) {
+        // Decrypt the line
+        std::string decryptedLine = decryptString(line, masterPassword);
+
+        // Split the decrypted line into data fields
+        std::vector<std::string> dataFields = splitString(decryptedLine, "::");
+        if (dataFields.size() == 5) {
+            names.push_back(dataFields[0]);
+            passwords.push_back(dataFields[1]);
+            categories.push_back(dataFields[2]);
+            services.push_back(dataFields[3]);
+            logins.push_back(dataFields[4]);
+        }
+    }
+
     file.close();
-    return content;
 }

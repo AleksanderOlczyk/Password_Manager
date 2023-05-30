@@ -7,7 +7,7 @@
 
 using std::cout, std::cin, std::endl, std::string;
 
-const string testPhrase = "VeryWeakPassword123%";
+const std::string testPhrase = "VeryWeakPassword123%";
 
 void LoginMenu::showOptions() {
     int option;
@@ -64,7 +64,7 @@ void LoginMenu::logIn(const string& filename) {
         if (decryptedPhrase == testPhrase) {
             cout << "Login successful!" << endl;
             Menu menu;
-            menu.showOptions(masterPassword);
+            menu.showOptions(masterPassword, fileAbsolutPath, testPhrase);
             return;
         }
     }
@@ -178,7 +178,7 @@ void LoginMenu::provideFilePath() {
                 if (decryptedPhrase == testPhrase) {
                     cout << "Login successful!" << endl;
                     Menu menu;
-                    menu.showOptions(masterPassword);
+                    menu.showOptions(masterPassword, filePath, testPhrase);
                     return;
                 }
             }
