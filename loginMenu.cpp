@@ -7,10 +7,9 @@
 
 using std::cout, std::cin, std::endl, std::string;
 
-const std::string testPhrase = "VeryWeakPassword123%";
-
 void LoginMenu::showOptions() {
     int option;
+    testPhrase= "VeryWeakPassword123%";
 
     do {
         clearScreen();

@@ -7,7 +7,7 @@ using namespace std;
 
 string masterPassword;
 string filePath;
-//string testPhrase;
+string testPhrase;
 
 std::vector<std::string> names;
 std::vector<std::string> passwords;
@@ -21,7 +21,7 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
     filePath = filePath;
     testPhrase = test;
 
-    File::readFromFile(filePath, testPhrase);
+    File::readFromFile();
 
     do {
         clearScreen();
@@ -117,7 +117,7 @@ void Menu::addUserPassword() {
 
     switch (option) {
         case 0:
-            showOptions(masterPassword);
+            showOptions(masterPassword, filePath, testPhrase);
             break;
         case 1:
             //nie wiem czemu nie działa
