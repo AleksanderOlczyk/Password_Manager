@@ -16,7 +16,7 @@ std::string File::decryptPhrase(const std::string& str, const std::string& key) 
 void File::saveToFile() {
     std::ofstream file(filePath);
     if (!file.is_open()) {
-        std::cout << "Failed to open file for writing." << std::endl;
+        std::cout << "Failed to open file for writing: " << filePath << std::endl;
         return;
     }
 
@@ -38,6 +38,7 @@ void File::saveToFile() {
     file.close();
     std::cout << "Data saved to file: " << filePath << std::endl;
 }
+
 
 std::string File::encryptString(const std::string& str, const std::string& key) {
     std::string encryptedStr = str;

@@ -18,7 +18,7 @@ std::vector<std::string> logins;
 void Menu::showOptions(const std::string& masterKey, const std::string& fileAbsolutePath, const std::string& test) {
     int option;
     masterPassword = masterKey;
-    filePath = filePath;
+    filePath = fileAbsolutePath;
     testPhrase = test;
 
     File::readFromFile();
@@ -47,11 +47,10 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
             case 0:
                 exit(0);
             case 1:
-//                findPaswords();
-                cout << "Opcja numer 1" << endl;
+                findPasswords();
                 break;
             case 2:
-//                sortPasswors();
+//                sortPasswords();
                 cout << "Opcja numer 2" << endl;
                 break;
             case 3:
@@ -80,17 +79,58 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
     } while (option != 0);
 }
 
-void Menu::doAction(int option) {
-    clearScreen();
+void Menu::findPasswords() {
+    int selectedPassword = -1;
+    string lastPassword;
+    string passwordStars;
 
-    cin.ignore();
-    cin.get();
+    while (true) {
+        clearScreen();
+        for (int i = 0; i < names.size(); i++) {
+            cout << i + 1 << ". Name: " << names[i] << " Password: ";
+
+            if (selectedPassword == i + 1) {
+                cout << lastPassword;
+            } else {
+                passwordStars = string(passwords[i].length(), '*');
+                cout << passwordStars;
+            }
+
+            cout << " Category: " << categories[i] << " Service: " << services[i] << " Login: " << logins[i] << endl;
+        }
+
+        cout << "Enter the number to view the password (0 to return to the menu): ";
+
+        while (!(cin >> selectedPassword) || selectedPassword < 0 || selectedPassword > names.size()) {
+            cout << "Invalid input. Please enter a valid option: ";
+            cin.clear();
+            cin.ignore();
+        }
+
+        if (selectedPassword == 0) {
+            break;
+        }
+
+        selectedPassword--;
+        lastPassword = passwords[selectedPassword];
+        cout << "Password: " << lastPassword << endl;
+
+        cout << "Press enter to continue...";
+        cin.ignore();
+        cin.get();
+    }
+
+    showOptions(masterPassword, filePath, testPhrase);
 }
 
 void Menu::addUserPassword() {
-    int option;
+    string name;
+    string password;
+    string category;
+    string service = "none";
+    string login = "none";
 
-    do {
+    while (true) {
         clearScreen();
         cout << "Add password:" << endl;
         cout << "1. Set password name (mandatory)" << endl;
@@ -102,106 +142,117 @@ void Menu::addUserPassword() {
         cout << "0. Return" << endl;
         cout << "Choose option: ";
 
+        int option;
+
         if (!(cin >> option) || option < 0 || option > 6) {
-            cout << "Invalid input. Please enter a valid option: ";
+            cout << "Invalid input. Please enter a valid option." << endl;
             cin.clear();
             cin.ignore();
+            cin.get();
+            continue;
         }
-    } while (option < 0 || option > 6);
 
-    string name;
-    string password;
-    string category;
-    string service;
-    string login;
-
-    switch (option) {
-        case 0:
-            showOptions(masterPassword, filePath, testPhrase);
-            break;
-        case 1:
-            //nie wiem czemu nie działa
-            getline(cin, name);
-            cout << "Enter password name: ";
-            cin >> name;
-            break;
-        case 2: {
-            cout << "Do you want to generate a password? (y/n): ";
-            char choice;
-            cin >> choice;
-
-            if (choice == 'y' || choice == 'Y') {
-                Password::generateAndSetPassword(masterPassword);
-            } else {
-                cout << "Enter your password: ";
-                password = Password::getPasswordInput();
-            }
-
-            if (Password::isPasswordUsed(password)) {
-                cout << "This password has been used before." << endl;
-                cout << "Do you want to set a new password? (y/n): ";
-
+        switch (option) {
+            case 0:
+                return;  // Powrót do menu
+            case 1:
+                cin.ignore();
+                cout << "Enter password name: ";
+                getline(cin, name);
+                break;
+            case 2: {
+                cout << "Do you want to generate a password? (y/n): ";
+                char choice;
                 cin >> choice;
+
                 if (choice == 'y' || choice == 'Y') {
-                    Password::generateAndSetPassword(masterPassword);
+                    Password::generateAndSetPassword();
                 } else {
                     cout << "Enter your password: ";
                     password = Password::getPasswordInput();
                 }
-            }
 
-            int strength = Password::checkPasswordStrength(password);
-            if (strength >= 3) {
-                cout << "Your password is strong: " << strength << "/4." << endl;
-            } else {
-                cout << "Your password is weak: " << strength << "/4." << endl;
-            }
+                if (Password::isPasswordUsed(password)) {
+                    cout << "This password has been used before." << endl;
+                    cout << "Do you want to set a new password? (y/n): ";
 
-            cin.ignore();
-            cin.get();
-            break;
+                    cin >> choice;
+                    if (choice == 'y' || choice == 'Y') {
+                        password = Password::generateAndSetPassword();
+                    } else {
+                        cout << "Enter your password: ";
+                        password = Password::getPasswordInput();
+                    }
+                }
+
+                int strength = Password::checkPasswordStrength(password);
+                if (strength >= 3) {
+                    cout << "Your password is strong: " << strength << "/4." << endl;
+                } else {
+                    cout << "Your password is weak: " << strength << "/4." << endl;
+                }
+
+                cin.ignore();
+                cin.get();
+                break;
+            }
+            case 3:
+                cin.ignore();
+                cout << "Enter category: ";
+                getline(cin, category);
+                break;
+            case 4:
+                cin.ignore();
+                cout << "Enter site url / service: ";
+                getline(cin, service);
+                break;
+            case 5:
+                cin.ignore();
+                cout << "Enter login: ";
+                getline(cin, login);
+                break;
+            case 6:
+                if (name.empty() || password.empty() || category.empty()) {
+                    cout << "Name, password, and category are mandatory fields. Please fill them in." << endl;
+                    cin.ignore();
+                    cin.get();
+                    break;
+                }
+
+                cout << "Summary:" << endl;
+                cout << "Name: " << name << endl;
+                cout << "Password: " << password << endl;
+                cout << "Category: " << category << endl;
+                cout << "Service: " << service << endl;
+                cout << "Login: " << login << endl;
+                cout << "Do you want to save this password? (y/n): ";
+                char choice;
+                cin >> choice;
+
+                if (choice == 'y' || choice == 'Y') {
+                    names.push_back(name);
+                    passwords.push_back(password);
+                    categories.push_back(category);
+                    services.push_back(service);
+                    logins.push_back(login);
+                    File::saveToFile();
+                    cout << "Password saved successfully." << endl;
+                    cin.ignore();
+                    cin.get();
+                    return;
+                } else {
+                    cout << "Do you want to edit the password? (y/n): ";
+                    cin >> choice;
+
+                    if (choice == 'y' || choice == 'Y') {
+                        continue;
+                    } else {
+                        cin.ignore();
+                        cin.get();
+                        return;
+                    }
+                }
         }
-        case 3:
-            cin.ignore();
-            cout << "Enter category: ";
-            cin >> category;
-            break;
-        case 4:
-            cin.ignore();
-            cout << "Enter site url / service: ";
-            cin >> service;
-            break;
-        case 5:
-            cin.ignore();
-            cout << "Enter login: ";
-            cin >> login;
-            break;
-        case 6:
-            cout << "Summary:" << endl;
-            cout << "Name: " << name << endl;
-            cout << "Password: " << password << endl;
-            cout << "Category: " << category << endl;
-            cout << "Service: " << service << endl;
-            cout << "Login: " << login << endl;
-            cout << "Do you want to save this password? (y/n): ";
-            char choice;
-            cin >> choice;
-
-            if (choice == 'y' || choice == 'Y') {
-                names.push_back(name);
-                passwords.push_back(password);
-                categories.push_back(category);
-                services.push_back(service);
-                logins.push_back(login);
-                File::saveToFile();
-            } else {
-                cout << "Password not saved." << endl;
-                addUserPassword();
-            }
-
-            cin.ignore();
-            cin.get();
-            break;
     }
 }
 

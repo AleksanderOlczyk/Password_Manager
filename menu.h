@@ -22,10 +22,9 @@ private:
     }
 
     /**
-     * This method executes the action.
-     * @param option - action number
+     * This method finds passwords.
      */
-    void doAction(int option);
+    void findPasswords();
 
     /**
      * This method adds a password.

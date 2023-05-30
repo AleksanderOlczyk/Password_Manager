@@ -13,7 +13,7 @@ public:
     /**
      * This method generates a random password and saves it to a file.
      */
-    static void generateAndSetPassword(const std::string& masterPassword);
+    static std::string generateAndSetPassword();
 
     /**
      * This method checks if the password strength.

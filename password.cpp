@@ -18,7 +18,7 @@ bool Password::isPasswordUsed(const std::string& password) {
     return false;
 }
 
-void Password::generateAndSetPassword(const std::string& masterPassword) {
+std::string Password::generateAndSetPassword() {
     int length;
     bool includeLowercase, includeUppercase, includeSpecialChars, includeDigits;
 
@@ -46,15 +46,7 @@ void Password::generateAndSetPassword(const std::string& masterPassword) {
     if (!password.empty())
         std::cout << "Generated password: " << password << std::endl;
 
-    std::ofstream file(filePath, std::ios::app);
-    if (file.is_open()) {
-        file << File::encryptPhrase(password, masterPassword) << std::endl;
-        file.close();
-
-        std::cout << "Password saved to file: " << filePath << std::endl;
-    } else {
-        std::cout << "Failed to open file for writing." << std::endl;
-    }
+    return password;
 }
 
 std::string Password::generatePassword(int length, bool includeLowercase, bool includeUppercase, bool includeSpecialChars, bool includeDigits) {
