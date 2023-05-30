@@ -167,6 +167,7 @@ void Menu::addUserPassword() {
                 cin >> choice;
 
                 if (choice == 'y' || choice == 'Y') {
+                    clearScreen();
                     Password::generateAndSetPassword();
                 } else {
                     cout << "Enter your password: ";

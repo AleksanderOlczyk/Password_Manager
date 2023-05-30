@@ -43,10 +43,12 @@ std::string Password::generateAndSetPassword() {
         password = generatePassword(length, includeLowercase, includeUppercase, includeSpecialChars, includeDigits);
     }
 
-    if (!password.empty())
+    if (!password.empty()) {
         std::cout << "Generated password: " << password << std::endl;
-
-    return password;
+        std::cout << "Press enter to continue..." << std::endl;
+        return password;
+    }
+    return "";
 }
 
 std::string Password::generatePassword(int length, bool includeLowercase, bool includeUppercase, bool includeSpecialChars, bool includeDigits) {
