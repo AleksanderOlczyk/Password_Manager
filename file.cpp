@@ -122,6 +122,13 @@ void File::readFromFile() {
         return;
     }
 
+    names.clear();
+    passwords.clear();
+    categories.clear();
+    services.clear();
+    logins.clear();
+    allCategories.clear();
+
     std::string line;
     std::getline(file, line);
 
@@ -132,16 +139,9 @@ void File::readFromFile() {
     std::vector<std::string> decryptedCategories = splitString(decryptedCategoriesLine, "::");
 
     // Add decrypted categories to allCategories set
-    allCategories.clear();
     for (const std::string& category : decryptedCategories) {
         allCategories.insert(category);
     }
-
-    names.clear();
-    passwords.clear();
-    categories.clear();
-    services.clear();
-    logins.clear();
 
     while (std::getline(file, line)) {
         std::string decryptedLine = decryptString(line, masterPassword);
