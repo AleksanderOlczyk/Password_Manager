@@ -11,7 +11,7 @@ public:
     /**
      * This method shows the menu options.
      */
-    void showOptions(const std::string& masterKey, const std::string& filePath, const std::string& test);
+    void showOptions(const std::string& masterKey, const std::string& filePath);
 
 private:
     /**

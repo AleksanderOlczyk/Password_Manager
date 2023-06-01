@@ -9,7 +9,6 @@ using std::cout, std::cin, std::endl, std::string;
 void LoginMenu::showOptions() {
     int option;
     testPhrase = "VeryWeakPassword123%";
-    allCategories = {"Work", "Social media", "none"};
 
     do {
         clearScreen();
@@ -48,22 +47,21 @@ void LoginMenu::logIn(const string& filename) {
 
     cout << "Selected file: " << filename << endl;
     cout << "Enter password: ";
-    string masterPassword = Password::getPasswordInput();
+    masterPassword = Password::getPasswordInput();
 
     string folderName = "users";
     string fileAbsolutPath = folderName + "/" + filename;
+
     ifstream file(fileAbsolutPath);
-
     if (file) {
-        string encryptedPassword;
-        getline(file, encryptedPassword);
-
-        string decryptedPhrase = File::decryptPhrase(encryptedPassword, masterPassword);
+        string encryptedPhrase;
+        getline(file, encryptedPhrase);
+        string decryptedPhrase = File::decryptPhrase(encryptedPhrase, masterPassword);
 
         if (decryptedPhrase == testPhrase) {
             cout << "Login successful!" << endl;
             Menu menu;
-            menu.showOptions(masterPassword, fileAbsolutPath, testPhrase);
+            menu.showOptions(masterPassword, fileAbsolutPath);
             return;
         }
     }
@@ -97,6 +95,17 @@ void LoginMenu::signUp() {
         ofstream file(fileAbsolutPath);
         if (file.is_open()) {
             filePath = fileAbsolutPath;
+
+            names.clear();
+            passwords.clear();
+            categories.clear();
+            services.clear();
+            logins.clear();
+            allCategories.clear();
+            allCategories.insert("Work");
+            allCategories.insert("Social_media");
+            allCategories.insert("None");
+
             File::saveToFile();
             file.close();
 
@@ -135,9 +144,6 @@ void LoginMenu::chooseFile() {
 
         int choice;
         cout << "Choose a file (0 to return to menu): ";
-
-
-
         while (!(cin >> choice) || choice < 1 || choice > files.size()) {
             cout << "Invalid input. Please enter a valid choice: ";
             cin.clear();
@@ -176,17 +182,19 @@ void LoginMenu::provideFilePath() {
 
             ifstream file(filePath);
             if (file) {
-
-                string encryptedPassword;
-                getline(file, encryptedPassword);
-                std::cout<<encryptedPassword<<"\n";
-                string decryptedPhrase = File::decryptPhrase(encryptedPassword, masterPassword);
-                cout << decryptedPhrase;
+                string encryptedPhrase;
+                getline(file, encryptedPhrase);
+                string decryptedPhrase = File::decryptPhrase(encryptedPhrase, masterPassword);
+                ///
+                cout << "Login menu decrypted test: " << decryptedPhrase << endl;
+                cin.ignore();
+                cin.get();
+                ///
 
                 if (decryptedPhrase == testPhrase) {
                     cout << "Login successful!" << endl;
                     Menu menu;
-                    menu.showOptions(masterPassword, filePath, testPhrase);
+                    menu.showOptions(masterPassword, filePath);
                     return;
                 }
             }

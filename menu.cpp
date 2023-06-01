@@ -17,11 +17,11 @@ std::vector<std::string> categories;
 std::vector<std::string> services;
 std::vector<std::string> logins;
 
-void Menu::showOptions(const std::string& masterKey, const std::string& fileAbsolutePath, const std::string& test) {
+void Menu::showOptions(const std::string& masterKey, const std::string& fileAbsolutePath) {
     int option;
     masterPassword = masterKey;
     filePath = fileAbsolutePath;
-    testPhrase = test;
+//    testPhrase = test;
 
     File::readFromFile();
 
@@ -128,7 +128,7 @@ void Menu::findPasswords() {
         cin.get();
     }
 
-    showOptions(masterPassword, filePath, testPhrase);
+    showOptions(masterPassword, filePath);
 }
 
 void Menu::addUserPassword() {

@@ -2,15 +2,11 @@
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
-#include <fstream>
 #include "password.h"
 
 bool Password::isPasswordUsed(const std::string& password) {
-    std::ifstream file(filePath);
-    std::string line;
-
-    while (getline(file, line)) {
-        if (line == password) {
+    for (int i = 0; i < passwords.size(); i++) {
+        if (passwords[i] == password) {
             return true;
         }
     }
@@ -47,7 +43,7 @@ std::string Password::generateAndSetPassword() {
         std::cout << "Press enter to continue..." << std::endl;
         return password;
     }
-    return "";
+    return password;
 }
 
 std::string Password::generatePassword(int length, bool includeLowercase, bool includeUppercase, bool includeSpecialChars, bool includeDigits) {
