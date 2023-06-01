@@ -20,31 +20,33 @@ void File::saveToFile() {
         std::cout << "Failed to open file for writing: " << filePath << std::endl;
         return;
     }
+    clearFile(filePath);
 
-    // Encrypt the test phrase and write it on the first line
     std::string encryptedTestPhrase = encryptPhrase(testPhrase, masterPassword);
     file << encryptedTestPhrase << std::endl;
 
-//    for (int i = 0; i < userCategories; ++i) {
-//
-//    }
+    //Encrypt allCategories to file
+    std::string encryptedAllCategories;
+    for (const std::string& category : allCategories) {
+        encryptedAllCategories += category + "::";
+    }
+
+    if (!encryptedAllCategories.empty()) {
+        encryptedAllCategories = encryptedAllCategories.substr(0, encryptedAllCategories.length() - 2);
+    }
+    encryptedAllCategories = encryptString(encryptedAllCategories, masterPassword);
+    file << encryptedAllCategories << std::endl;
 
     // Save the data in the specified format
-    for (size_t i = 0; i < names.size(); i++) {
-        std::string encryptedName = encryptString(names[i], masterPassword);
-        std::string encryptedPassword = encryptString(passwords[i], masterPassword);
-        std::string encryptedCategory = encryptString(categories[i], masterPassword);
-        std::string encryptedService = encryptString(services[i], masterPassword);
-        std::string encryptedLogin = encryptString(logins[i], masterPassword);
-
-        std::string encryptedData = encryptedName + "::" + encryptedPassword + "::" + encryptedCategory + "::" + encryptedService + "::" + encryptedLogin;
+    for (int i = 0; i < names.size(); i++) {
+        std::string data = names[i] + "::" + passwords[i] + "::" + categories[i] + "::" + services[i] + "::" + logins[i];
+        std::string encryptedData = encryptString(data, masterPassword);
         file << encryptedData << std::endl;
     }
 
     file.close();
     std::cout << "Data saved to file: " << filePath << std::endl;
 }
-
 
 std::string File::encryptString(const std::string& str, const std::string& key) {
     std::string encryptedStr = str;
@@ -74,6 +76,45 @@ std::vector<std::string> File::splitString(const std::string& str, const std::st
     return tokens;
 }
 
+//void File::readFromFile() {
+//    std::ifstream file(filePath);
+//    if (!file.is_open()) {
+//        std::cout << "Failed to open file for reading." << std::endl;
+//        return;
+//    }
+//    std::string tmp;
+//    std::getline(file, tmp);
+//
+//    std::string categoriesLine;
+//    std::getline(file, categoriesLine);
+//
+//    //Decrypt and split the categories
+//    std::string decryptedCategoriesLine = decryptString(categoriesLine, masterPassword);
+//    std::vector<std::string> decryptedCategories = splitString(decryptedCategoriesLine, "::");
+//
+//    //Add decrypted categories to allCategories set
+//    for (const std::string& category : decryptedCategories) {
+//        allCategories.insert(category);
+//    }
+//
+//    std::string line;
+//    while (std::getline(file, line)) {
+//        //Decrypt the line
+//        std::string decryptedLine = decryptString(line, masterPassword);
+//
+//        //Split the decrypted line into data fields
+//        std::vector<std::string> dataFields = splitString(decryptedLine, "::");
+//        if (dataFields.size() == 5) {
+//            names.push_back(dataFields[0]);
+//            passwords.push_back(dataFields[1]);
+//            categories.push_back(dataFields[2]);
+//            services.push_back(dataFields[3]);
+//            logins.push_back(dataFields[4]);
+//        }
+//    }
+//    file.close();
+//}
+
 void File::readFromFile() {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -81,21 +122,30 @@ void File::readFromFile() {
         return;
     }
 
+    std::string line;
+    std::getline(file, line);
+
+    // Decrypt and split the categories
     std::string categoriesLine;
     std::getline(file, categoriesLine);
-
-    //Decrypt and split the categories
     std::string decryptedCategoriesLine = decryptString(categoriesLine, masterPassword);
     std::vector<std::string> decryptedCategories = splitString(decryptedCategoriesLine, "::");
-//    allCategories(decryptedCategories.begin(), decryptedCategories.end());
 
+    // Add decrypted categories to allCategories set
+    allCategories.clear();
+    for (const std::string& category : decryptedCategories) {
+        allCategories.insert(category);
+    }
 
-    std::string line;
+    names.clear();
+    passwords.clear();
+    categories.clear();
+    services.clear();
+    logins.clear();
+
     while (std::getline(file, line)) {
-        //Decrypt the line
         std::string decryptedLine = decryptString(line, masterPassword);
 
-        //Split the decrypted line into data fields
         std::vector<std::string> dataFields = splitString(decryptedLine, "::");
         if (dataFields.size() == 5) {
             names.push_back(dataFields[0]);
@@ -104,6 +154,15 @@ void File::readFromFile() {
             services.push_back(dataFields[3]);
             logins.push_back(dataFields[4]);
         }
+    }
+    file.close();
+}
+
+void File::clearFile(const std::string& filePath) {
+    std::ofstream file(filePath, std::ofstream::out | std::ofstream::trunc);
+    if (!file.is_open()) {
+        std::cout << "Failed to open file for clearing: " << filePath << std::endl;
+        return;
     }
     file.close();
 }

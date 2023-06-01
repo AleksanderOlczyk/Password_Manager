@@ -67,8 +67,7 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
                 cout << "Opcja numer 5" << endl;
                 break;
             case 6:
-//                addCategory();
-                cout << "Opcja numer 6" << endl;
+                addCategory();
                 break;
             case 7:
 //                deleteCategory();
@@ -148,8 +147,7 @@ void Menu::addUserPassword() {
         cout << "4. Set site url / service" << endl;
         cout << "5. Set login" << endl;
         cout << "6. Show summary" << endl;
-        cout << "0. Return" << endl;
-        cout << "Choose option: ";
+        cout << "Choose option (0 to return): ";
 
         int option;
 
@@ -163,7 +161,7 @@ void Menu::addUserPassword() {
 
         switch (option) {
             case 0:
-                return;  // Powrót do menu
+                return;
             case 1:
                 cin.ignore();
                 cout << "Enter password name: ";
@@ -201,16 +199,33 @@ void Menu::addUserPassword() {
                 } else {
                     cout << "Your password is weak: " << strength << "/4." << endl;
                 }
+                cout << "Press Enter to continue..." << endl;
 
                 cin.ignore();
                 cin.get();
                 break;
             }
-            case 3:
+            case 3: {
+                clearScreen();
+                showCategories();
+                cout << "Select category: ";
+
+                int categoryOption;
+                if (!(cin >> categoryOption) || categoryOption < 1 || categoryOption > allCategories.size()) {
+                    cout << "Invalid input. Please enter a valid option." << endl;
+                    cin.clear();
+                    cin.ignore();
+                    cin.get();
+                    break;
+                }
+
+                auto it = allCategories.begin();
+                std::advance(it, categoryOption - 1);
+                category = *it;
+
                 cin.ignore();
-                cout << "Enter category: ";
-                getline(cin, category);
                 break;
+            }
             case 4:
                 cin.ignore();
                 cout << "Enter site url / service: ";
@@ -222,6 +237,7 @@ void Menu::addUserPassword() {
                 getline(cin, login);
                 break;
             case 6:
+                clearScreen();
                 if (name.empty() || password.empty() || category.empty()) {
                     cout << "Name, password, and category are mandatory fields. Please fill them in." << endl;
                     cin.ignore();
@@ -247,6 +263,7 @@ void Menu::addUserPassword() {
                     logins.push_back(login);
                     File::saveToFile();
                     cout << "Password saved successfully." << endl;
+                    cout << "Press enter to continue..." << endl;
                     cin.ignore();
                     cin.get();
                     return;
@@ -266,7 +283,44 @@ void Menu::addUserPassword() {
     }
 }
 
+void Menu::addCategory() {
+    clearScreen();
+    showCategories();
+
+    std::string newCategory;
+    std::cout << "Enter the name of the new category (or '0' to return to the menu): ";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::getline(std::cin, newCategory);
+
+    if (newCategory == "0") {
+        return;
+    }
+
+    if (std::find(allCategories.begin(), allCategories.end(), newCategory) != allCategories.end()) {
+        std::cout << "Category already exists." << std::endl;
+        return;
+    }
+
+    allCategories.insert(newCategory);
+    File::saveToFile();
+    std::cout << "Category added: " << newCategory << std::endl;
+}
+
+void Menu::showCategories() {
+    if (allCategories.empty()) {
+        std::cout << "No categories found." << std::endl;
+        return;
+    }
+
+    int i = 1;
+    for (const string& existingCategory : allCategories) {
+        cout << i << ". " << existingCategory << endl;
+        i++;
+    }
+}
+
 void Menu::logOut() {
+    File::saveToFile();
     LoginMenu loginMenu;
     loginMenu.showOptions();
 }

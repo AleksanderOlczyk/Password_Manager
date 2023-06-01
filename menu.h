@@ -32,6 +32,16 @@ private:
     void addUserPassword();
 
     /**
+     * This method add new category.
+     */
+    void addCategory();
+
+    /**
+     * This method display all categories.
+     */
+    void showCategories();
+
+    /**
      * This method signs out.
      */
     void logOut();

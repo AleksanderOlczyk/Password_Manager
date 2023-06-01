@@ -12,6 +12,7 @@ public:
     static std::string decryptString(const std::string& str, const std::string& key);
     static std::vector<std::string> splitString(const std::string& str, const std::string& delimiter);
     static void readFromFile();
+    static void clearFile(const string &filePath);
 };
 
 #endif

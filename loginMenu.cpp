@@ -1,4 +1,3 @@
-#include <fstream>
 #include <filesystem>
 #include "loginMenu.h"
 #include "menu.cpp"
@@ -91,14 +90,13 @@ void LoginMenu::signUp() {
         cin.ignore();
         cin.get();
     } else {
-        string masterPassword;
         cout << "Enter password: ";
         cin >> masterPassword;
 
         ofstream file(fileAbsolutPath);
         if (file.is_open()) {
-            string encryptedTestPhrase = File::encryptPhrase(testPhrase, masterPassword);
-            file << encryptedTestPhrase << endl;
+            filePath = fileAbsolutPath;
+            File::saveToFile();
             file.close();
 
             cout << "Registration successful!" << endl;
@@ -135,11 +133,15 @@ void LoginMenu::chooseFile() {
         }
 
         int choice;
-        cout << "Choose a file: ";
+        cout << "Choose a file (0 to return to menu): ";
+
+
 
         while (!(cin >> choice) || choice < 1 || choice > files.size()) {
             cout << "Invalid input. Please enter a valid choice: ";
             cin.clear();
+            if (choice == 0)
+                showOptions();
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
 
@@ -152,13 +154,15 @@ void LoginMenu::chooseFile() {
     cin.get();
 }
 
-
 void LoginMenu::provideFilePath() {
     clearScreen();
     string extension = ".txt";
 
-    cout << "Enter the file path (including the .txt extension): ";
+    cout << "Enter the file path (including the .txt extension) (0 return to menu): ";
     cin >> filePath;
+
+    if (filePath == "0")
+        showOptions();
 
     if (filePath.size() < extension.size() || !std::equal(extension.rbegin(), extension.rend(), filePath.rbegin())) {
         cout << "Invalid file path. The file should have the .txt extension." << endl;
