@@ -156,7 +156,6 @@ void LoginMenu::chooseFile() {
 void LoginMenu::provideFilePath() {
     clearScreen();
     string extension = ".txt";
-    string filePath;
 
     cout << "Enter the file path (including the .txt extension): ";
     cin >> filePath;
@@ -167,12 +166,17 @@ void LoginMenu::provideFilePath() {
         if (!std::filesystem::exists(filePath)) {
             cout << "The specified file does not exist." << endl;
         } else {
+            cout << "Enter password: ";
+            masterPassword = Password::getPasswordInput();
+
             ifstream file(filePath);
             if (file) {
+
                 string encryptedPassword;
                 getline(file, encryptedPassword);
-
+                std::cout<<encryptedPassword<<"\n";
                 string decryptedPhrase = File::decryptPhrase(encryptedPassword, masterPassword);
+                cout << decryptedPhrase;
 
                 if (decryptedPhrase == testPhrase) {
                     cout << "Login successful!" << endl;

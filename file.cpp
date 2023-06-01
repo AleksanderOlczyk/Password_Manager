@@ -3,6 +3,7 @@
 
 std::string File::encryptPhrase(const std::string& str, const std::string& key) {
     std::string encryptedStr = str;
+
     for (size_t i = 0; i < encryptedStr.length(); i++) {
         encryptedStr[i] = str[i] ^ key[i % key.length()];
     }
@@ -24,6 +25,10 @@ void File::saveToFile() {
     std::string encryptedTestPhrase = encryptPhrase(testPhrase, masterPassword);
     file << encryptedTestPhrase << std::endl;
 
+//    for (int i = 0; i < userCategories; ++i) {
+//
+//    }
+
     // Save the data in the specified format
     for (size_t i = 0; i < names.size(); i++) {
         std::string encryptedName = encryptString(names[i], masterPassword);
@@ -32,7 +37,8 @@ void File::saveToFile() {
         std::string encryptedService = encryptString(services[i], masterPassword);
         std::string encryptedLogin = encryptString(logins[i], masterPassword);
 
-        file << encryptedName << "::" << encryptedPassword << "::" << encryptedCategory << "::" << encryptedService << "::" << encryptedLogin << std::endl;
+        std::string encryptedData = encryptedName + "::" + encryptedPassword + "::" + encryptedCategory + "::" + encryptedService + "::" + encryptedLogin;
+        file << encryptedData << std::endl;
     }
 
     file.close();
@@ -81,7 +87,8 @@ void File::readFromFile() {
     //Decrypt and split the categories
     std::string decryptedCategoriesLine = decryptString(categoriesLine, masterPassword);
     std::vector<std::string> decryptedCategories = splitString(decryptedCategoriesLine, "::");
-    categories.assign(decryptedCategories.begin(), decryptedCategories.end());
+//    allCategories(decryptedCategories.begin(), decryptedCategories.end());
+
 
     std::string line;
     while (std::getline(file, line)) {

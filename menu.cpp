@@ -1,4 +1,5 @@
 #include <iostream>
+#include <set>
 #include "menu.h"
 #include "password.h"
 #include "file.h"
@@ -7,7 +8,7 @@ using namespace std;
 
 string masterPassword;
 string filePath;
-std::vector<std::string> allCategories = {"Work", "Social media", "none"};
+std::set<std::string> allCategories = {"Work", "Social media", "none"};
 
 string testPhrase;
 std::vector<std::string> names;
@@ -87,6 +88,13 @@ void Menu::findPasswords() {
 
     while (true) {
         clearScreen();
+        if (names.empty()) {
+            cout << "No passwords found. Please add a password." << endl;
+            cout << "Press enter to continue...";
+            cin.ignore();
+            cin.get();
+            break;
+        }
         for (int i = 0; i < names.size(); i++) {
             cout << i + 1 << ". Name: " << names[i] << " Password: ";
 
