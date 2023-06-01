@@ -4,8 +4,12 @@
 std::string File::encryptPhrase(const std::string& str, const std::string& key) {
     std::string encryptedStr = str;
 
+    ///
+    cout << "Encrypt phrase master pass: " << key << endl;
+    cout << "str: " << str << endl;
+    ///
     for (size_t i = 0; i < encryptedStr.length(); i++) {
-        encryptedStr[i] = str[i] ^ key[i % key.length()];
+        encryptedStr[i] = static_cast<unsigned char>(str[i]) ^ static_cast<unsigned char>(key[i % key.length()]);
     }
     return encryptedStr;
 }
@@ -21,6 +25,10 @@ void File::saveToFile() {
         return;
     }
 
+    file << "\xEF\xBB\xBF"; // BOM (Byte Order Mark) dla UTF-8
+    ////
+    cout << "Master password: " << masterPassword << endl;
+    ////
     clearFile(filePath);
     std::string encryptedTestPhrase = encryptPhrase(testPhrase, masterPassword);
     ///
@@ -29,36 +37,38 @@ void File::saveToFile() {
     ///
     file << encryptedTestPhrase << std::endl;
 
-    std::string encryptedAllCategories;
+    std::string allCategoriesLine;
     for (const std::string& category : allCategories) {
-        encryptedAllCategories += category + "::";
+        allCategoriesLine += category + "::";
     }
 
-    if (!encryptedAllCategories.empty()) {
-        encryptedAllCategories = encryptedAllCategories.substr(0, encryptedAllCategories.length() - 2);
+    if (!allCategoriesLine.empty())
+        allCategoriesLine = allCategoriesLine.substr(0, allCategoriesLine.length() - 2);
+
+    /////
+    std::cout << "Category: " << allCategoriesLine << std::endl;
+    /////
+
+    if (!allCategoriesLine.empty()) {
+        std::string EncryptedAllCategoriesLine = encryptString(allCategoriesLine);
+        file << EncryptedAllCategoriesLine << std::endl;
+        std::cout << "Encrypted category: " << EncryptedAllCategoriesLine << std::endl;
     }
 
-    /////
-    std::cout << "Encrypted category: " << encryptedAllCategories << std::endl;
-    /////
+    if (!names.empty()) {
+        for (size_t i = 0; i < names.size(); i++) {
+            std::string data =
+                    names[i] + "::" + passwords[i] + "::" + categories[i] + "::" + services[i] + "::" + logins[i];
+            ///
+            std::cout << "Encrypted data from file: " << data << std::endl;
+            ///
+            std::string encryptedData = encryptString(data);
+            ///
+            std::cout << "Decrypted data: " << encryptedData << std::endl;
+            ///
 
-    encryptedAllCategories = encryptString(encryptedAllCategories, masterPassword);
-    file << encryptedAllCategories << std::endl;
-    /////
-    std::cout << "Encrypted category: " << encryptedAllCategories << std::endl;
-    /////
-
-    for (size_t i = 0; i < names.size(); i++) {
-        std::string data = names[i] + "::" + passwords[i] + "::" + categories[i] + "::" + services[i] + "::" + logins[i];
-        ///
-        std::cout << "Encrypted data from file: " << data << std::endl;
-        ///
-        std::string encryptedData = encryptString(data, masterPassword);
-        ///
-        std::cout << "Decrypted data: " << encryptedData << std::endl;
-        ///
-
-        file << encryptedData << std::endl;
+            file << encryptedData << std::endl;
+        }
     }
 
     file.close();
@@ -67,16 +77,24 @@ void File::saveToFile() {
     cin.get();
 }
 
-std::string File::encryptString(const std::string& str, const std::string& key) {
+std::string File::encryptString(const std::string& str) {
     std::string encryptedStr = str;
+
+    ///
+    cout << "Encrypt string master pass: " << masterPassword << endl;
+    cout << "str: " << str << endl;
+    ///
     for (size_t i = 0; i < encryptedStr.length(); i++) {
-        encryptedStr[i] = str[i] ^ key[i % key.length()];
+        encryptedStr[i] = static_cast<unsigned char>(str[i]) ^ static_cast<unsigned char>(masterPassword[i % masterPassword.length()]);
     }
+    ///
+    cout << "Encrypt string: " << encryptedStr << endl;
+    ///
     return encryptedStr;
 }
 
-std::string File::decryptString(const std::string& str, const std::string& key) {
-    return encryptString(str, key); //Encryption and decryption are the same
+std::string File::decryptString(const std::string& str) {
+    return encryptString(str); //Encryption and decryption are the same
 }
 
 std::vector<std::string> File::splitString(const std::string& str, const std::string& delimiter) {
@@ -95,50 +113,21 @@ std::vector<std::string> File::splitString(const std::string& str, const std::st
     return tokens;
 }
 
-//void File::readFromFile() {
-//    std::ifstream file(filePath);
-//    if (!file.is_open()) {
-//        std::cout << "Failed to open file for reading." << std::endl;
-//        return;
-//    }
-//    std::string tmp;
-//    std::getline(file, tmp);
-//
-//    std::string categoriesLine;
-//    std::getline(file, categoriesLine);
-//
-//    //Decrypt and split the categories
-//    std::string decryptedCategoriesLine = decryptString(categoriesLine, masterPassword);
-//    std::vector<std::string> decryptedCategories = splitString(decryptedCategoriesLine, "::");
-//
-//    //Add decrypted categories to allCategories set
-//    for (const std::string& category : decryptedCategories) {
-//        allCategories.insert(category);
-//    }
-//
-//    std::string line;
-//    while (std::getline(file, line)) {
-//        //Decrypt the line
-//        std::string decryptedLine = decryptString(line, masterPassword);
-//
-//        //Split the decrypted line into data fields
-//        std::vector<std::string> dataFields = splitString(decryptedLine, "::");
-//        if (dataFields.size() == 5) {
-//            names.push_back(dataFields[0]);
-//            passwords.push_back(dataFields[1]);
-//            categories.push_back(dataFields[2]);
-//            services.push_back(dataFields[3]);
-//            logins.push_back(dataFields[4]);
-//        }
-//    }
-//    file.close();
-//}
-
 void File::readFromFile() {
     std::ifstream file(filePath);
     if (!file.is_open()) {
         std::cout << "Failed to open file for reading." << std::endl;
         return;
+    }
+
+    // pomijanie BOM, jeśli istnieje
+    char bom[3];
+    file.read(bom, 3);
+    if (bom[0] == '\xEF' && bom[1] == '\xBB' && bom[2] == '\xBF') {
+        // plik zawiera BOM, można go pominąć
+    } else {
+        // przewinięcie pliku do początku
+        file.seekg(0);
     }
 
     names.clear();
@@ -151,6 +140,7 @@ void File::readFromFile() {
     std::string line;
     std::getline(file, line);
     ///
+    cout << "Master password: " << masterPassword << endl;
     std::string tmp = decryptPhrase(line, masterPassword);
     cout << "Decrypted test: " << tmp << endl;
     ///
@@ -161,7 +151,7 @@ void File::readFromFile() {
     ///
     cout << "Categories line: " << categoriesLine << endl;
     ///
-    std::string decryptedCategoriesLine = decryptString(categoriesLine, masterPassword);
+    std::string decryptedCategoriesLine = decryptString(categoriesLine);
     std::vector<std::string> decryptedCategories = splitString(decryptedCategoriesLine, "::");
 
     /////
@@ -182,7 +172,7 @@ void File::readFromFile() {
     std::cout << "\n\nDecrypted lines: " << std::endl;
     ///
     while (std::getline(file, line)) {
-        std::string decryptedLine = decryptString(line, masterPassword);
+        std::string decryptedLine = decryptString(line);
         ///
         std::cout << "Decrypted line: " << decryptedLine << std::endl;
         ///

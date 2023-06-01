@@ -21,7 +21,6 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
     int option;
     masterPassword = masterKey;
     filePath = fileAbsolutePath;
-//    testPhrase = test;
 
     File::readFromFile();
 
@@ -135,8 +134,8 @@ void Menu::addUserPassword() {
     string name;
     string password;
     string category;
-    string service = "none";
-    string login = "none";
+    string service;
+    string login;
 
     while (true) {
         clearScreen();
@@ -174,7 +173,7 @@ void Menu::addUserPassword() {
 
                 if (choice == 'y' || choice == 'Y') {
                     clearScreen();
-                    Password::generateAndSetPassword();
+                    password = Password::generateAndSetPassword();
                 } else {
                     cout << "Enter your password: ";
                     password = Password::getPasswordInput();
@@ -200,7 +199,6 @@ void Menu::addUserPassword() {
                     cout << "Your password is weak: " << strength << "/4." << endl;
                 }
                 cout << "Press Enter to continue..." << endl;
-
                 cin.ignore();
                 cin.get();
                 break;
@@ -256,12 +254,18 @@ void Menu::addUserPassword() {
                 cin >> choice;
 
                 if (choice == 'y' || choice == 'Y') {
+                    if (service.empty())
+                        service = "none";
+                    if (login.empty())
+                        login = "none";
+
                     names.push_back(name);
                     passwords.push_back(password);
                     categories.push_back(category);
                     services.push_back(service);
                     logins.push_back(login);
                     File::saveToFile();
+
                     cout << "Password saved successfully." << endl;
                     cout << "Press enter to continue..." << endl;
                     cin.ignore();
@@ -302,6 +306,11 @@ void Menu::addCategory() {
     }
 
     allCategories.insert(newCategory);
+    ///
+    cout << "New Category: " << newCategory << endl;
+    cin.ignore();
+    cin.get();
+    ///
     File::saveToFile();
     std::cout << "Category added: " << newCategory << std::endl;
 }

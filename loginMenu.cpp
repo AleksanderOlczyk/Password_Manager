@@ -7,9 +7,9 @@
 using std::cout, std::cin, std::endl, std::string;
 
 void LoginMenu::showOptions() {
-    int option;
     testPhrase = "VeryWeakPassword123%";
 
+    int option;
     do {
         clearScreen();
         cout << "Login Menu:" << endl;
@@ -101,9 +101,10 @@ void LoginMenu::signUp() {
             categories.clear();
             services.clear();
             logins.clear();
+
             allCategories.clear();
+            allCategories.insert("Social Media");
             allCategories.insert("Work");
-            allCategories.insert("Social_media");
             allCategories.insert("None");
 
             File::saveToFile();
