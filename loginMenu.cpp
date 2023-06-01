@@ -8,7 +8,8 @@ using std::cout, std::cin, std::endl, std::string;
 
 void LoginMenu::showOptions() {
     int option;
-    testPhrase= "VeryWeakPassword123%";
+    testPhrase = "VeryWeakPassword123%";
+    allCategories = {"Work", "Social media", "none"};
 
     do {
         clearScreen();

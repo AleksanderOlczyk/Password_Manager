@@ -8,7 +8,7 @@ using namespace std;
 
 string masterPassword;
 string filePath;
-std::set<std::string> allCategories = {"Work", "Social media", "none"};
+std::set<std::string> allCategories;
 
 string testPhrase;
 std::vector<std::string> names;

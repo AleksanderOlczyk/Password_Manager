@@ -14,7 +14,6 @@ bool Password::isPasswordUsed(const std::string& password) {
             return true;
         }
     }
-
     return false;
 }
 
@@ -89,7 +88,6 @@ std::string Password::generatePassword(int length, bool includeLowercase, bool i
     }
 
     std::random_shuffle(password.begin(), password.end());
-
     return password;
 }
 
@@ -154,14 +152,13 @@ int Password::checkPasswordStrength(const std::string& password) {
     if (hasDigit) {
         strength++;
     }
-
     return strength;
 }
 
 string Password::getPasswordInput() {
     string password;
-    char c;
 
+    char c;
     while ((c = _getwch()) != '\r') {
         if (c == '\b') {
             if (!password.empty()) {
@@ -173,7 +170,6 @@ string Password::getPasswordInput() {
             password.push_back(c);
         }
     }
-
     cout << endl;
     return password;
 }
