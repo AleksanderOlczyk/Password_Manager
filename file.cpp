@@ -2,20 +2,43 @@
 #include "file.h"
 
 std::string File::encryptPhrase(const std::string& str, const std::string& key) {
-    std::string encryptedStr = str;
+    std::string encryptedStr;
+    encryptedStr.reserve(str.length());
 
-    ///
-    cout << "Encrypt phrase master pass: " << key << endl;
-    cout << "str: " << str << endl;
-    ///
-    for (size_t i = 0; i < encryptedStr.length(); i++) {
-        encryptedStr[i] = static_cast<unsigned char>(str[i]) ^ static_cast<unsigned char>(key[i % key.length()]);
+    for (size_t i = 0; i < str.length(); i++) {
+        encryptedStr += str[i] ^ key[i % key.length()];
     }
     return encryptedStr;
 }
 
 std::string File::decryptPhrase(const std::string& str, const std::string& key) {
-    return encryptPhrase(str, key); //Encryption and decryption are the same
+    std::string decryptedStr;
+    decryptedStr.reserve(str.length());
+
+    for (size_t i = 0; i < str.length(); i++) {
+        decryptedStr += str[i] ^ key[i % key.length()];
+    }
+    return decryptedStr;
+}
+
+std::string File::encryptString(const std::string& str) {
+    std::string encryptedStr;
+    encryptedStr.reserve(str.length());
+
+    for (size_t i = 0; i < str.length(); i++) {
+        encryptedStr += str[i] ^ masterPassword[i % masterPassword.length()];
+    }
+    return encryptedStr;
+}
+
+std::string File::decryptString(const std::string& str) {
+    std::string encryptedStr;
+    encryptedStr.reserve(str.length());
+
+    for (size_t i = 0; i < str.length(); i++) {
+        encryptedStr += str[i] ^ masterPassword[i % masterPassword.length()];
+    }
+    return encryptedStr;
 }
 
 void File::saveToFile() {
@@ -25,16 +48,9 @@ void File::saveToFile() {
         return;
     }
 
-    file << "\xEF\xBB\xBF"; // BOM (Byte Order Mark) dla UTF-8
-    ////
-    cout << "Master password: " << masterPassword << endl;
-    ////
     clearFile(filePath);
+
     std::string encryptedTestPhrase = encryptPhrase(testPhrase, masterPassword);
-    ///
-    std::cout << "Original test: " << testPhrase << std::endl;
-    std::cout << "Encrypted test: " << encryptedTestPhrase << std::endl;
-    ///
     file << encryptedTestPhrase << std::endl;
 
     std::string allCategoriesLine;
@@ -77,26 +93,6 @@ void File::saveToFile() {
     cin.get();
 }
 
-std::string File::encryptString(const std::string& str) {
-    std::string encryptedStr = str;
-
-    ///
-    cout << "Encrypt string master pass: " << masterPassword << endl;
-    cout << "str: " << str << endl;
-    ///
-    for (size_t i = 0; i < encryptedStr.length(); i++) {
-        encryptedStr[i] = static_cast<unsigned char>(str[i]) ^ static_cast<unsigned char>(masterPassword[i % masterPassword.length()]);
-    }
-    ///
-    cout << "Encrypt string: " << encryptedStr << endl;
-    ///
-    return encryptedStr;
-}
-
-std::string File::decryptString(const std::string& str) {
-    return encryptString(str); //Encryption and decryption are the same
-}
-
 std::vector<std::string> File::splitString(const std::string& str, const std::string& delimiter) {
     std::vector<std::string> tokens;
     size_t start = 0;
@@ -120,16 +116,6 @@ void File::readFromFile() {
         return;
     }
 
-    // pomijanie BOM, jeśli istnieje
-    char bom[3];
-    file.read(bom, 3);
-    if (bom[0] == '\xEF' && bom[1] == '\xBB' && bom[2] == '\xBF') {
-        // plik zawiera BOM, można go pominąć
-    } else {
-        // przewinięcie pliku do początku
-        file.seekg(0);
-    }
-
     names.clear();
     passwords.clear();
     categories.clear();
@@ -139,13 +125,11 @@ void File::readFromFile() {
 
     std::string line;
     std::getline(file, line);
-    ///
-    cout << "Master password: " << masterPassword << endl;
-    std::string tmp = decryptPhrase(line, masterPassword);
-    cout << "Decrypted test: " << tmp << endl;
-    ///
 
-    // Decrypt and split the categories
+    //Ignore test phrase
+    std::string testPhrase = decryptPhrase(line, masterPassword);
+
+    //Decrypt and split the categories
     std::string categoriesLine;
     std::getline(file, categoriesLine);
     ///
@@ -169,7 +153,7 @@ void File::readFromFile() {
     }
 
     ///
-    std::cout << "\n\nDecrypted lines: " << std::endl;
+    std::cout << "\nDecrypted lines: " << std::endl;
     ///
     while (std::getline(file, line)) {
         std::string decryptedLine = decryptString(line);
