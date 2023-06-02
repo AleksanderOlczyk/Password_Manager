@@ -27,11 +27,6 @@ private:
     void findPasswords();
 
     /**
-     * This method adds a password.
-     */
-    void addUserPassword();
-
-    /**
      * This method add new category.
      */
     void addCategory();
@@ -70,6 +65,16 @@ private:
      * This method display passwords.
      */
     void displayPasswords();
+
+    /**
+     * This method adds a password.
+     */
+    void addUserPassword();
+
+    /**
+     * This method allow user to edit password.
+     */
+    void editPassword();
 
     /**
      * This method signs out.

@@ -57,7 +57,7 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
                 addUserPassword();
                 break;
             case 4:
-//                editPassword();
+                editPassword();
                 break;
             case 5:
 //                deletePassword();
@@ -158,6 +158,7 @@ void Menu::findPasswords() {
     cin.ignore();
     cin.get();
 }
+
 
 void Menu::showPasswords() {
     system("cls");
@@ -260,6 +261,100 @@ void Menu::displayPasswords() {
              << " Service: " << services[i] << " Login: " << logins[i] << endl;
     }
 }
+
+
+void Menu::editPassword() {
+    int option;
+    do {
+        clearScreen();
+        cout << "Edit password:" << endl;
+        cout << "0. Back to menu" << endl;
+
+        for (size_t i = 0; i < names.size(); i++) {
+            cout << i + 1 << ". Name: " << names[i] << " Password: " << passwords[i] << " Category: " << categories[i]
+                 << " Service: " << services[i] << " Login: " << logins[i] << endl;
+        }
+
+        cout << "Enter the number to select a password to edit: ";
+
+        while (!(cin >> option) || option < 0 || option > names.size()) {
+            cout << "Invalid input. Please enter a valid option: ";
+            cin.clear();
+            cin.ignore();
+        }
+
+        if (option == 0) {
+            return;
+        }
+
+        size_t index = option - 1;
+
+        cout << "Selected password: " << names[index] << endl;
+        cout << "Choose an option to edit: " << endl;
+        cout << "1. Name" << endl;
+        cout << "2. Password" << endl;
+        cout << "3. Category" << endl;
+        cout << "4. Service" << endl;
+        cout << "5. Login" << endl;
+        cout << "0. Back to menu" << endl;
+        cout << "Enter your choice: ";
+
+        while (!(cin >> option) || option < 0 || option > 5) {
+            cout << "Invalid input. Please enter a valid option: ";
+            cin.clear();
+            cin.ignore();
+        }
+
+        cin.ignore();
+        switch (option) {
+            case 0:
+                return;
+            case 1: {
+                cout << "Enter new name (previous name: " << names[index] << "): ";
+                getline(cin, names[index]);
+                break;
+            }
+            case 2: {
+                cout << "Enter new password (previous password: " << passwords[index] << "): ";
+                getline(cin, passwords[index]);
+                break;
+            }
+            case 3: {
+                cout << "Choose a category (previous category:" << categories[index] << "): ";
+                showCategories();
+                string category;
+                getline(cin, category);
+
+                while (allCategories.find(category) == allCategories.end()) {
+                    cout << "Invalid category. Please choose from existing categories: ";
+                    getline(cin, category);
+                }
+                categories[index] = category;
+                break;
+            }
+            case 4: {
+                cout << "Enter new service (previous service: " << services[index] << "): ";
+                getline(cin, services[index]);
+                break;
+            }
+            case 5: {
+                cout << "Enter new login (previous login: " << logins[index] << "): ";
+                getline(cin, logins[index]);
+                break;
+            }
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+                break;
+        }
+
+        cout << "Password updated successfully!" << endl;
+
+        cout << "Press enter to continue...";
+        cin.ignore();
+        cin.get();
+    } while (true);
+}
+
 
 void Menu::addUserPassword() {
     string name;
