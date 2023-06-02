@@ -51,15 +51,13 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
                 findPasswords();
                 break;
             case 2:
-//                sortPasswords();
-                cout << "Opcja numer 2" << endl;
+                sortPasswords();
                 break;
             case 3:
                 addUserPassword();
                 break;
             case 4:
 //                editPassword();
-                cout << "Opcja numer 4" << endl;
                 break;
             case 5:
 //                deletePassword();
@@ -79,55 +77,188 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
     } while (option != 0);
 }
 
+//void Menu::findPasswords() {
+//    int selectedPassword = -1;
+//    string lastPassword;
+//    string passwordStars;
+//
+//    while (true) {
+//        clearScreen();
+//        if (names.empty()) {
+//            cout << "No passwords found. Please add a password." << endl;
+//            cout << "Press enter to continue...";
+//            cin.ignore();
+//            cin.get();
+//            break;
+//        }
+//        for (int i = 0; i < names.size(); i++) {
+//            cout << i + 1 << ". Name: " << names[i] << " Password: ";
+//
+//            if (selectedPassword == i + 1) {
+//                cout << lastPassword;
+//            } else {
+//                passwordStars = string(passwords[i].length(), '*');
+//                cout << passwordStars;
+//            }
+//
+//            cout << " Category: " << categories[i] << " Service: " << services[i] << " Login: " << logins[i] << endl;
+//        }
+//
+//        cout << "Enter the number to view the password (0 to return to the menu): ";
+//
+//        while (!(cin >> selectedPassword) || selectedPassword < 0 || selectedPassword > names.size()) {
+//            cout << "Invalid input. Please enter a valid option: ";
+//            cin.clear();
+//            cin.ignore();
+//        }
+//
+//        if (selectedPassword == 0) {
+//            break;
+//        }
+//
+//        selectedPassword--;
+//        lastPassword = passwords[selectedPassword];
+//        cout << "Password: " << lastPassword << endl;
+//
+//        cout << "Press enter to continue...";
+//        cin.ignore();
+//        cin.get();
+//    }
+//
+//    showOptions(masterPassword, filePath);
+//}
+
 void Menu::findPasswords() {
-    int selectedPassword = -1;
-    string lastPassword;
-    string passwordStars;
+    showPasswords();
+    string searchName;
+    std::cout << "Enter the name to search for (0 retunr to menu): ";
+    cin.ignore();
+    getline(cin, searchName);
 
-    while (true) {
-        clearScreen();
-        if (names.empty()) {
-            cout << "No passwords found. Please add a password." << endl;
-            cout << "Press enter to continue...";
-            cin.ignore();
-            cin.get();
-            break;
+    if (searchName == "0")
+        return;
+
+    bool found = false;
+    for (size_t i = 0; i < names.size(); i++) {
+        if (names[i].find(searchName) != string::npos) {
+            std::cout << "Name: " << names[i];
+            std::cout << " Password: " << passwords[i];
+            std::cout << " Category: " << categories[i];
+            std::cout << " Service: " << services[i];
+            std::cout << " Login: " << logins[i];
+            found = true;
         }
-        for (int i = 0; i < names.size(); i++) {
-            cout << i + 1 << ". Name: " << names[i] << " Password: ";
+    }
 
-            if (selectedPassword == i + 1) {
-                cout << lastPassword;
-            } else {
-                passwordStars = string(passwords[i].length(), '*');
-                cout << passwordStars;
-            }
+    if (!found) {
+        cout << "No passwords found with the specified name." << endl;
+    }
 
-            cout << " Category: " << categories[i] << " Service: " << services[i] << " Login: " << logins[i] << endl;
-        }
+    cout << "Press enter to continue...";
+    cin.ignore();
+    cin.get();
+}
 
-        cout << "Enter the number to view the password (0 to return to the menu): ";
+void Menu::showPasswords() {
+    system("cls");
+    for (size_t i = 0; i < names.size(); i++) {
+        std::cout << i+1 << ". Name: " << names[i];
+        std::cout << " Password: " << passwords[i];
+        std::cout << " Category: " << categories[i];
+        std::cout << " Service: " << services[i];
+        std::cout << " Login: " << logins[i];
+    }
+}
 
-        while (!(cin >> selectedPassword) || selectedPassword < 0 || selectedPassword > names.size()) {
+void Menu::sortPasswords() {
+    system("cls");
+    int option;
+    do {
+        cout << "Sort passwords:" << endl;
+        cout << "1. Sort by name (Alphabetical order)" << endl;
+        cout << "2. Sort by name (Reverse alphabetical order)" << endl;
+        cout << "3. Sort by category (Alphabetical order)" << endl;
+        cout << "4. Sort by category (Reverse alphabetical order)" << endl;
+        cout << "5. Display passwords from a category" << endl;
+        cout << "Enter your choice (or '0' to return to the menu): ";
+
+        while (!(cin >> option) || option < 0 || option > 5) {
             cout << "Invalid input. Please enter a valid option: ";
             cin.clear();
             cin.ignore();
         }
 
-        if (selectedPassword == 0) {
-            break;
+        switch (option) {
+            case 0:
+                return;
+            case 1:
+                sortByName(true); //Alphabetical order
+                break;
+            case 2:
+                sortByName(false); //Reverse alphabetical order
+                break;
+            case 3:
+                sortByCategory(true); //Alphabetical order
+                break;
+            case 4:
+                sortByCategory(false); //Reverse alphabetical order
+                break;
+            case 5:
+                displayPasswordsFromCategory(); //Display passwords from a category
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+                break;
         }
-
-        selectedPassword--;
-        lastPassword = passwords[selectedPassword];
-        cout << "Password: " << lastPassword << endl;
 
         cout << "Press enter to continue...";
         cin.ignore();
         cin.get();
+    } while (true);
+}
+
+void Menu::sortByName(bool ascending) {
+    if (ascending) {
+        sort(names.begin(), names.end()); //Alphabetical order
+    } else {
+        sort(names.rbegin(), names.rend()); //Reverse alphabetical order
     }
 
-    showOptions(masterPassword, filePath);
+    cout << "Sorted passwords by name:" << endl;
+    displayPasswords();
+}
+
+void Menu::sortByCategory(bool ascending) {
+    if (ascending) {
+        sort(categories.begin(), categories.end()); //Alphabetical order
+    } else {
+        sort(categories.rbegin(), categories.rend()); //Reverse alphabetical order
+    }
+
+    cout << "Sorted passwords by category:" << endl;
+    displayPasswords();
+}
+
+void Menu::displayPasswordsFromCategory() {
+    string category;
+    cout << "Enter the category: ";
+    cin.ignore();
+    getline(cin, category);
+
+    cout << "Passwords from category '" << category << "':" << endl;
+    for (size_t i = 0; i < categories.size(); i++) {
+        if (categories[i] == category) {
+            cout << "Name: " << names[i] << " Password: " << passwords[i] << " Category: " << categories[i]
+                 << " Service: " << services[i] << " Login: " << logins[i] << endl;
+        }
+    }
+}
+
+void Menu::displayPasswords() {
+    for (size_t i = 0; i < names.size(); i++) {
+        cout << "Name: " << names[i] << " Password: " << passwords[i] << " Category: " << categories[i]
+             << " Service: " << services[i] << " Login: " << logins[i] << endl;
+    }
 }
 
 void Menu::addUserPassword() {
@@ -264,6 +395,7 @@ void Menu::addUserPassword() {
                     categories.push_back(category);
                     services.push_back(service);
                     logins.push_back(login);
+
                     File::saveToFile();
 
                     cout << "Password saved successfully." << endl;
@@ -306,11 +438,6 @@ void Menu::addCategory() {
     }
 
     allCategories.insert(newCategory);
-    ///
-    cout << "New Category: " << newCategory << endl;
-    cin.ignore();
-    cin.get();
-    ///
     File::saveToFile();
     std::cout << "Category added: " << newCategory << std::endl;
 }

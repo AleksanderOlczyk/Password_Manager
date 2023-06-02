@@ -42,6 +42,36 @@ private:
     void showCategories();
 
     /**
+     * This method display all passwords.
+     */
+    void showPasswords();
+
+    /**
+     * This method sort passwords.
+     */
+    void sortPasswords();
+
+    /**
+     * This method sort passwords by name.
+     */
+    void sortByName(bool ascending);
+
+    /**
+     * This method sort passwords by category.
+     */
+    void sortByCategory(bool ascending);
+
+    /**
+     * This method show passwords from category.
+     */
+    void displayPasswordsFromCategory();
+
+    /**
+     * This method display passwords.
+     */
+    void displayPasswords();
+
+    /**
      * This method signs out.
      */
     void logOut();
