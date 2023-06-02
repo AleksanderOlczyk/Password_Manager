@@ -82,6 +82,11 @@ private:
     void deletePassword();
 
     /**
+     * This method delete category and all password sign to it.
+     */
+    void deleteCategory();
+
+    /**
      * This method signs out.
      */
     void logOut();

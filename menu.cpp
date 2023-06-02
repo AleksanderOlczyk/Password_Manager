@@ -66,7 +66,7 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
                 addCategory();
                 break;
             case 7:
-//                deleteCategory();
+                deleteCategory();
                 break;
             case 8:
                 logOut();
@@ -596,6 +596,53 @@ void Menu::showCategories() {
         cout << i << ". " << existingCategory << endl;
         i++;
     }
+}
+
+void Menu::deleteCategory() {
+    string categoryToDelete;
+    bool isValidCategory = false;
+
+    do {
+        cout << "Enter the category to delete (or '0' to return to the menu): ";
+        cin.ignore();
+        getline(cin, categoryToDelete);
+
+        if (categoryToDelete == "0")
+            return;
+
+        if (allCategories.count(categoryToDelete) == 0)
+            cout << "Category not found. Please try again." << endl;
+        else
+            isValidCategory = true;
+    } while (!isValidCategory);
+
+    cout << "Are you sure you want to delete the category '" << categoryToDelete << "'? (Y/N): ";
+    string confirmation;
+    cin >> confirmation;
+
+    if (confirmation == "Y" || confirmation == "y") {
+        allCategories.erase(categoryToDelete);
+
+        // Delete passwords associated with the category
+        for (size_t i = 0; i < categories.size(); i++) {
+            if (categories[i] == categoryToDelete) {
+                names.erase(names.begin() + i);
+                passwords.erase(passwords.begin() + i);
+                categories.erase(categories.begin() + i);
+                services.erase(services.begin() + i);
+                logins.erase(logins.begin() + i);
+                i--;
+            }
+        }
+
+        cout << "Category and associated passwords deleted successfully!" << endl;
+    } else {
+        cout << "Category deletion canceled." << endl;
+    }
+
+    cout << "Press enter to continue...";
+    cin.ignore();
+    cin.get();
 }
 
 void Menu::logOut() {
