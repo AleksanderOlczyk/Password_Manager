@@ -62,6 +62,11 @@ private:
     void displayPasswordsFromCategory();
 
     /**
+     * This method show password from category, and allow to filter them by name.
+     */
+    void displayPasswordsFromCategoryAndSearch();
+
+    /**
      * This method display passwords.
      */
     void displayPasswords();

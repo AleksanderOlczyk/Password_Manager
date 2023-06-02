@@ -35,7 +35,6 @@ private:
      * This method checks what user want to do.
      */
     static bool getUserChoice();
-
 };
 
 #endif

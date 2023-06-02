@@ -46,6 +46,7 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
 
         switch (option) {
             case 0:
+                File::saveToFile();
                 exit(0);
             case 1:
                 findPasswords();
@@ -127,38 +128,33 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
 //}
 
 void Menu::findPasswords() {
+    clearScreen();
     showPasswords();
     string searchName;
-    std::cout << "Enter the name to search for (0 retunr to menu): ";
+    std::cout << "Enter the name to search for (0 return to menu): ";
     cin.ignore();
     getline(cin, searchName);
 
+    clearScreen();
     if (searchName == "0")
         return;
 
-    bool found = false;
     for (size_t i = 0; i < names.size(); i++) {
         if (names[i].find(searchName) != string::npos) {
             std::cout << "Name: " << names[i];
             std::cout << " Password: " << passwords[i];
             std::cout << " Category: " << categories[i];
             std::cout << " Service: " << services[i];
-            std::cout << " Login: " << logins[i];
-            found = true;
+            std::cout << " Login: " << logins[i] << endl;
         }
     }
 
-    if (!found) {
-        cout << "No passwords found with the specified name." << endl;
-    }
-
-    cout << "Press enter to continue...";
     cin.ignore();
     cin.get();
 }
 
 void Menu::showPasswords() {
-    system("cls");
+    clearScreen();
     if (names.empty()) {
             cout << "No passwords found. Please add a password." << endl;
             cout << "Press enter to continue...";
@@ -172,12 +168,12 @@ void Menu::showPasswords() {
         std::cout << " Password: " << passwords[i];
         std::cout << " Category: " << categories[i];
         std::cout << " Service: " << services[i];
-        std::cout << " Login: " << logins[i];
+        std::cout << " Login: " << logins[i] << endl;
     }
 }
 
 void Menu::sortPasswords() {
-    system("cls");
+    clearScreen();
     int option;
     do {
         cout << "Sort passwords:" << endl;
@@ -186,14 +182,16 @@ void Menu::sortPasswords() {
         cout << "3. Sort by category (Alphabetical order)" << endl;
         cout << "4. Sort by category (Reverse alphabetical order)" << endl;
         cout << "5. Display passwords from a category" << endl;
+        cout << "6. Display passwords from a category and search by name" << endl;
         cout << "Enter your choice (or '0' to return to the menu): ";
 
-        while (!(cin >> option) || option < 0 || option > 5) {
+        while (!(cin >> option) || option < 0 || option > 6) {
             cout << "Invalid input. Please enter a valid option: ";
             cin.clear();
             cin.ignore();
         }
 
+        clearScreen();
         switch (option) {
             case 0:
                 return;
@@ -212,6 +210,9 @@ void Menu::sortPasswords() {
             case 5:
                 displayPasswordsFromCategory(); //Display passwords from a category
                 break;
+            case 6:
+                displayPasswordsFromCategoryAndSearch();
+                break;
             default:
                 cout << "Invalid choice. Please try again." << endl;
                 break;
@@ -220,6 +221,7 @@ void Menu::sortPasswords() {
         cout << "Press enter to continue...";
         cin.ignore();
         cin.get();
+        clearScreen();
     } while (true);
 }
 
@@ -246,16 +248,90 @@ void Menu::sortByCategory(bool ascending) {
 }
 
 void Menu::displayPasswordsFromCategory() {
-    string category;
+    clearScreen();
+    showCategories();
+
+    int categoryIndex;
     cout << "Enter the category: ";
+    while (!(cin >> categoryIndex) || categoryIndex < 1 || categoryIndex > allCategories.size()) {
+        cout << "Invalid category index. Please choose a valid index: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
     cin.ignore();
-    getline(cin, category);
+
+    auto it = allCategories.begin();
+    advance(it, categoryIndex - 1);
+    string category = *it;
 
     cout << "Passwords from category '" << category << "':" << endl;
     for (size_t i = 0; i < categories.size(); i++) {
         if (categories[i] == category) {
             cout << "Name: " << names[i] << " Password: " << passwords[i] << " Category: " << categories[i]
                  << " Service: " << services[i] << " Login: " << logins[i] << endl;
+        }
+    }
+}
+
+void Menu::displayPasswordsFromCategoryAndSearch() {
+    clearScreen();
+    showCategories();
+
+    int categoryIndex;
+    cout << "Enter the category: ";
+    while (!(cin >> categoryIndex) || categoryIndex < 1 || categoryIndex > allCategories.size()) {
+        cout << "Invalid category index. Please choose a valid index: ";
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    cin.ignore();
+
+    auto it = allCategories.begin();
+    advance(it, categoryIndex - 1);
+    string category = *it;
+
+    clearScreen();
+    cout << "Passwords from category '" << category << "':" << endl;
+
+    vector<size_t> indexes;
+    for (size_t i = 0; i < categories.size(); i++) {
+        if (categories[i] == category) {
+            indexes.push_back(i);
+        }
+    }
+
+    sort(indexes.begin(), indexes.end(), [&](size_t i1, size_t i2) {
+        return names[i1] < names[i2];
+    });
+
+    for (const auto& index : indexes) {
+        cout << "Name: " << names[index] << " Password: " << passwords[index]
+             << " Category: " << categories[index] << " Service: " << services[index]
+             << " Login: " << logins[index] << endl;
+    }
+
+    string searchName;
+    cout << "Enter password name to search (leave empty to skip, 0 to return to menu): ";
+    getline(cin, searchName);
+
+    clearScreen();
+    if (searchName == "0") {
+        return;
+    }
+
+    if (!searchName.empty()) {
+        bool found = false;
+        for (const auto& index : indexes) {
+            if (names[index].find(searchName) != string::npos) {
+                found = true;
+                cout << "Name: " << names[index] << " Password: " << passwords[index]
+                     << " Category: " << categories[index] << " Service: " << services[index]
+                     << " Login: " << logins[index] << endl;
+            }
+        }
+
+        if (!found) {
+            cout << "Password with name '" << searchName << "' not found in the selected category." << endl;
         }
     }
 }
@@ -291,6 +367,7 @@ void Menu::editPassword() {
 
         size_t index = option - 1;
 
+        clearScreen();
         cout << "Selected password: " << names[index] << endl;
         cout << "Choose an option to edit: " << endl;
         cout << "1. Name" << endl;
@@ -298,8 +375,7 @@ void Menu::editPassword() {
         cout << "3. Category" << endl;
         cout << "4. Service" << endl;
         cout << "5. Login" << endl;
-        cout << "0. Back to menu" << endl;
-        cout << "Enter your choice: ";
+        cout << "Enter your choice (0 return to menu): ";
 
         while (!(cin >> option) || option < 0 || option > 5) {
             cout << "Invalid input. Please enter a valid option: ";
@@ -308,6 +384,7 @@ void Menu::editPassword() {
         }
 
         cin.ignore();
+        clearScreen();
         switch (option) {
             case 0:
                 return;
@@ -322,16 +399,19 @@ void Menu::editPassword() {
                 break;
             }
             case 3: {
-                cout << "Choose a category (previous category:" << categories[index] << "): ";
                 showCategories();
-                string category;
-                getline(cin, category);
-
-                while (allCategories.find(category) == allCategories.end()) {
-                    cout << "Invalid category. Please choose from existing categories: ";
-                    getline(cin, category);
+                int categoryIndex;
+                cout << "Choose a category index (previous category index: " << index << "): ";
+                while (!(cin >> categoryIndex) || categoryIndex < 1 || categoryIndex > allCategories.size()) {
+                    cout << "Invalid category index. Please choose a valid index: ";
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
-                categories[index] = category;
+                cin.ignore();
+
+                auto it = allCategories.begin();
+                advance(it, --categoryIndex);
+                categories[index] = *it;
                 break;
             }
             case 4: {
@@ -349,6 +429,7 @@ void Menu::editPassword() {
                 break;
         }
 
+        File::saveToFile();
         cout << "Password updated successfully!" << endl;
 
         cout << "Press enter to continue...";
@@ -537,7 +618,7 @@ void Menu::deletePassword() {
         }
 
         size_t index = option - 1;
-
+        clearScreen();
         cout << "Selected password: " << names[index] << endl;
 
         cout << "Are you sure you want to delete this password? (Y/N): ";
@@ -551,6 +632,7 @@ void Menu::deletePassword() {
             services.erase(services.begin() + index);
             logins.erase(logins.begin() + index);
 
+            File::saveToFile();
             cout << "Password deleted successfully!" << endl;
         } else {
             cout << "Password deletion canceled." << endl;
@@ -599,33 +681,50 @@ void Menu::showCategories() {
 }
 
 void Menu::deleteCategory() {
-    string categoryToDelete;
+    if (allCategories.empty()) {
+        cout << "No categories found." << endl;
+        cout << "Press enter to continue...";
+        cin.ignore();
+        cin.get();
+        clearScreen();
+        return;
+    }
+
+    clearScreen();
+    cout << "Available categories:" << endl;
+    showCategories();
+
+    int categoryToDelete;
     bool isValidCategory = false;
 
     do {
-        cout << "Enter the category to delete (or '0' to return to the menu): ";
-        cin.ignore();
-        getline(cin, categoryToDelete);
+        cout << "Enter the number of the category to delete (or '0' to return to the menu): ";
+        cin >> categoryToDelete;
 
-        if (categoryToDelete == "0")
+        if (categoryToDelete == 0)
             return;
 
-        if (allCategories.count(categoryToDelete) == 0)
-            cout << "Category not found. Please try again." << endl;
+        if (categoryToDelete < 1 || categoryToDelete > allCategories.size())
+            cout << "Invalid category number. Please try again." << endl;
         else
             isValidCategory = true;
     } while (!isValidCategory);
 
-    cout << "Are you sure you want to delete the category '" << categoryToDelete << "'? (Y/N): ";
+    // Find the category name corresponding to the selected number
+    auto it = allCategories.begin();
+    advance(it, categoryToDelete - 1);
+    string categoryToDeleteName = *it;
+
+    cout << "Are you sure you want to delete the category '" << categoryToDeleteName << "'? (Y/N): ";
     string confirmation;
     cin >> confirmation;
 
     if (confirmation == "Y" || confirmation == "y") {
-        allCategories.erase(categoryToDelete);
+        allCategories.erase(categoryToDeleteName);
 
         // Delete passwords associated with the category
         for (size_t i = 0; i < categories.size(); i++) {
-            if (categories[i] == categoryToDelete) {
+            if (categories[i] == categoryToDeleteName) {
                 names.erase(names.begin() + i);
                 passwords.erase(passwords.begin() + i);
                 categories.erase(categories.begin() + i);
@@ -635,6 +734,7 @@ void Menu::deleteCategory() {
             }
         }
 
+        File::saveToFile();
         cout << "Category and associated passwords deleted successfully!" << endl;
     } else {
         cout << "Category deletion canceled." << endl;
@@ -643,6 +743,7 @@ void Menu::deleteCategory() {
     cout << "Press enter to continue...";
     cin.ignore();
     cin.get();
+    clearScreen();
 }
 
 void Menu::logOut() {

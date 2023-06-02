@@ -40,7 +40,6 @@ std::string Password::generateAndSetPassword() {
 
     if (!password.empty()) {
         std::cout << "Generated password: " << password << std::endl;
-        std::cout << "Press enter to continue..." << std::endl;
         return password;
     }
     return password;

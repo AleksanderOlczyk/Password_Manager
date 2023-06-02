@@ -50,9 +50,9 @@ void LoginMenu::logIn(const string& filename) {
     masterPassword = Password::getPasswordInput();
 
     string folderName = "users";
-    string fileAbsolutPath = folderName + "/" + filename;
+    filePath = folderName + "/" + filename;
 
-    ifstream file(fileAbsolutPath);
+    ifstream file(filePath);
     if (file) {
         string encryptedPhrase;
         getline(file, encryptedPhrase);
@@ -61,11 +61,12 @@ void LoginMenu::logIn(const string& filename) {
         if (decryptedPhrase == testPhrase) {
             cout << "Login successful!" << endl;
             Menu menu;
-            menu.showOptions(masterPassword, fileAbsolutPath);
+            menu.showOptions(masterPassword, filePath);
             return;
         }
     }
 
+    addTimeStamp();
     cout << "Invalid fileName or password. Please try again." << endl;
     cout << "Press enter to return to the menu..." << endl;
     cin.ignore();
@@ -186,11 +187,6 @@ void LoginMenu::provideFilePath() {
                 string encryptedPhrase;
                 getline(file, encryptedPhrase);
                 string decryptedPhrase = File::decryptPhrase(encryptedPhrase, masterPassword);
-                ///
-                cout << "Login menu decrypted test: " << decryptedPhrase << endl;
-                cin.ignore();
-                cin.get();
-                ///
 
                 if (decryptedPhrase == testPhrase) {
                     cout << "Login successful!" << endl;
@@ -202,8 +198,45 @@ void LoginMenu::provideFilePath() {
         }
     }
 
+    addTimeStamp();
     cout << "Invalid fileName or password. Please try again." << endl;
     cout << "Press enter to return to the menu..." << endl;
     cin.ignore();
     cin.get();
+}
+
+string generateRandomChars(int length) {
+    const string characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const int charactersLength = characters.length();
+
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+    string randomString;
+    for (int i = 0; i < length; ++i) {
+        int randomIndex = std::rand() % charactersLength;
+        randomString += characters[randomIndex];
+    }
+
+    return randomString;
+}
+
+void LoginMenu::addTimeStamp() {
+    time_t now = time(nullptr); //system time
+    tm* timeinfo = localtime(&now); //detailed information about time
+
+    char timestamp[9];
+    strftime(timestamp, sizeof(timestamp), "%T", timeinfo);
+
+    string encryptedData = generateRandomChars(10) + to_string(timeinfo->tm_year + 1900) + generateRandomChars(11) +
+                           to_string(timeinfo->tm_mon + 1) + generateRandomChars(12) +
+                           to_string(timeinfo->tm_mday) + generateRandomChars(13) +
+                           to_string(timeinfo->tm_hour) + generateRandomChars(14) +
+                           to_string(timeinfo->tm_min) + generateRandomChars(15) +
+                           to_string(timeinfo->tm_sec);
+
+    ofstream file(filePath, std::ios_base::app);
+    if (file) {
+        file << encryptedData << endl;
+        file.close();
+    }
 }

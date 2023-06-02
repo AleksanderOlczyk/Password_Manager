@@ -7,6 +7,9 @@
 
 class LoginMenu {
 public:
+    /**
+     * This method display options.
+     */
     void showOptions();
 
 private:
@@ -18,12 +21,12 @@ private:
     }
 
     /**
-     * This method logs in the user.
+     * This method log in the user.
      */
     void logIn(const std::string& filename);
 
     /**
-     * This method signs up the user.
+     * This method sign up the user.
      */
     void signUp();
 
@@ -41,6 +44,11 @@ private:
      * This method get the file path from user.
      */
     void provideFilePath();
+
+    /**
+     * This method add time stamp.
+     */
+    void addTimeStamp();
 };
 
 #endif
