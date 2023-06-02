@@ -60,15 +60,13 @@ void Menu::showOptions(const std::string& masterKey, const std::string& fileAbso
                 editPassword();
                 break;
             case 5:
-//                deletePassword();
-                cout << "Opcja numer 5" << endl;
+                deletePassword();
                 break;
             case 6:
                 addCategory();
                 break;
             case 7:
 //                deleteCategory();
-                cout << "Opcja numer 7" << endl;
                 break;
             case 8:
                 logOut();
@@ -159,9 +157,16 @@ void Menu::findPasswords() {
     cin.get();
 }
 
-
 void Menu::showPasswords() {
     system("cls");
+    if (names.empty()) {
+            cout << "No passwords found. Please add a password." << endl;
+            cout << "Press enter to continue...";
+            cin.ignore();
+            cin.get();
+            return;
+        }
+
     for (size_t i = 0; i < names.size(); i++) {
         std::cout << i+1 << ". Name: " << names[i];
         std::cout << " Password: " << passwords[i];
@@ -262,20 +267,17 @@ void Menu::displayPasswords() {
     }
 }
 
-
 void Menu::editPassword() {
     int option;
     do {
         clearScreen();
         cout << "Edit password:" << endl;
-        cout << "0. Back to menu" << endl;
-
         for (size_t i = 0; i < names.size(); i++) {
             cout << i + 1 << ". Name: " << names[i] << " Password: " << passwords[i] << " Category: " << categories[i]
                  << " Service: " << services[i] << " Login: " << logins[i] << endl;
         }
 
-        cout << "Enter the number to select a password to edit: ";
+        cout << "Enter the number to select a password to edit  (0 return to menu): ";
 
         while (!(cin >> option) || option < 0 || option > names.size()) {
             cout << "Invalid input. Please enter a valid option: ";
@@ -354,7 +356,6 @@ void Menu::editPassword() {
         cin.get();
     } while (true);
 }
-
 
 void Menu::addUserPassword() {
     string name;
@@ -512,6 +513,53 @@ void Menu::addUserPassword() {
                 }
         }
     }
+}
+
+void Menu::deletePassword() {
+    int option;
+    do {
+        clearScreen();
+        cout << "Delete password: ";
+        for (size_t i = 0; i < names.size(); i++) {
+            cout << i + 1 << ". Name: " << names[i] << " Password: " << passwords[i] << " Category: " << categories[i]
+                 << " Service: " << services[i] << " Login: " << logins[i] << endl;
+        }
+
+        cout << "Enter the number to select a password to delete  (0 return to menu): ";
+        while (!(cin >> option) || option < 0 || option > names.size()) {
+            cout << "Invalid input. Please enter a valid option: ";
+            cin.clear();
+            cin.ignore();
+        }
+
+        if (option == 0) {
+            return;
+        }
+
+        size_t index = option - 1;
+
+        cout << "Selected password: " << names[index] << endl;
+
+        cout << "Are you sure you want to delete this password? (Y/N): ";
+        string confirmation;
+        cin >> confirmation;
+
+        if (confirmation == "Y" || confirmation == "y") {
+            names.erase(names.begin() + index);
+            passwords.erase(passwords.begin() + index);
+            categories.erase(categories.begin() + index);
+            services.erase(services.begin() + index);
+            logins.erase(logins.begin() + index);
+
+            cout << "Password deleted successfully!" << endl;
+        } else {
+            cout << "Password deletion canceled." << endl;
+        }
+
+        cout << "Press enter to continue...";
+        cin.ignore();
+        cin.get();
+    } while (true);
 }
 
 void Menu::addCategory() {

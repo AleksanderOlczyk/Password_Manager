@@ -77,6 +77,11 @@ private:
     void editPassword();
 
     /**
+     * This method delete password.
+     */
+    void deletePassword();
+
+    /**
      * This method signs out.
      */
     void logOut();
